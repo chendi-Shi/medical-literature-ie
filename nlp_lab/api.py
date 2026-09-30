@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel, Field
 
 from .cli import safe_child
@@ -35,6 +35,14 @@ class TrainRequest(BaseModel):
     accumulation: int = Field(default=1, ge=1, le=128)
     device: str = "auto"
     seed: int = 42
+    baseline_model: str = "logistic"
+    regularization: str = "ce"
+    rdrop_alpha: float = Field(default=.5, ge=0, le=20)
+    fgm_epsilon: float = Field(default=.5, ge=0, le=10)
+    adversarial_weight: float = Field(default=.5, ge=0, le=10)
+    schedule: str = "constant"
+    warmup_ratio: float = Field(default=0, ge=0, lt=1)
+    mixed_precision: str = "fp32"
 
 
 class PredictRequest(BaseModel):
@@ -43,7 +51,7 @@ class PredictRequest(BaseModel):
 
 def create_app(workspace: Path):
     workspace = workspace.resolve()
-    app = FastAPI(title="NLP Training Lab", version="0.1.0")
+    app = FastAPI(title="NLP Training Lab", version="0.2.0")
 
     @app.middleware("http")
     async def local_requests(request: Request, call_next):
@@ -88,9 +96,41 @@ def create_app(workspace: Path):
                 env={**os.environ, "PYTHONIOENCODING": "utf-8"},
             )
 
+    def research_state():
+        path = workspace / "research" / "thucnews-10k-v2" / "state.json"
+        return read_json(path) if path.exists() else {}
+
     @app.get("/", response_class=HTMLResponse)
     def index():
         return (Path(__file__).parent / "web" / "index.html").read_text(encoding="utf-8")
+
+    @app.get("/assets/{name}")
+    def assets(name: str):
+        if name not in ("research.js", "research.css"):
+            raise HTTPException(404, "文件不存在")
+        return FileResponse(Path(__file__).parent / "web" / name)
+
+    @app.get("/api/research")
+    def research():
+        directory = workspace / "research" / "thucnews-10k-v2"
+        if not (directory / "protocol.json").exists():
+            return {"phase": "not_prepared"}
+        protocol = read_json(directory / "protocol.json")
+        state = research_state()
+        entries = []
+        for entry in state.get("entries", []):
+            run = checked("runs", entry["run"])
+            meta = read_json(run / "run.json")
+            values = {**entry, **{k: meta.get(k) for k in ("status", "seconds", "current_epoch", "batches_done", "batches_per_epoch", "best_epoch", "peak_cuda_memory_mb")}}
+            if (run / "validation_metrics.json").exists():
+                metrics = read_json(run / "validation_metrics.json")
+                values["validation_macro_f1"] = metrics["macro_f1"]
+            entries.append(values)
+        result = {"protocol": protocol, "state": state, "experiments": entries,
+                  "dataset": read_json(checked("datasets", protocol["dataset"]) / "manifest.json")}
+        if (directory / "report.json").exists():
+            result["report"] = read_json(directory / "report.json")
+        return result
 
     @app.get("/api/datasets")
     def datasets():
@@ -117,6 +157,8 @@ def create_app(workspace: Path):
 
     @app.post("/api/runs", status_code=202)
     def train(body: TrainRequest):
+        if research_state().get("phase") in ("training", "evaluating"):
+            raise HTTPException(409, "研究套件正在运行，完成后可新增独立实验")
         if (workspace / ".training.lock").exists():
             raise HTTPException(409, "已有训练任务运行，请等待结束")
         dataset = checked("datasets", body.dataset)
@@ -134,7 +176,7 @@ def create_app(workspace: Path):
     def detail(run_id: str):
         run = checked("runs", run_id)
         result = read_json(run / "run.json")
-        for name in ("history", "validation_metrics", "test_metrics", "validation_errors", "test_errors", "evaluation_status"):
+        for name in ("history", "validation_metrics", "test_metrics", "validation_errors", "test_errors", "evaluation_status", "calibration", "robustness"):
             if (run / f"{name}.json").exists():
                 value = read_json(run / f"{name}.json")
                 result[name] = value[:100] if name.endswith("errors") else value
@@ -156,6 +198,8 @@ def create_app(workspace: Path):
             raise HTTPException(400, "未知评测划分")
         if read_json(run / "run.json")["status"] != "completed":
             raise HTTPException(400, "请等待训练完成")
+        if read_json(run / "run.json").get("research_protocol"):
+            raise HTTPException(409, "研究套件的评测产物由冻结协议统一生成；请查看已有结果或创建独立实验")
         status_file = run / "evaluation_status.json"
         if status_file.exists() and read_json(status_file)["status"] == "running":
             raise HTTPException(409, "评测仍在运行")

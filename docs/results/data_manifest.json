@@ -1,0 +1,244 @@
+{
+  "schema_version": 2,
+  "labels": [
+    "体育",
+    "娱乐",
+    "房产",
+    "教育",
+    "时政",
+    "游戏",
+    "社会",
+    "科技",
+    "股票",
+    "财经"
+  ],
+  "source": "THUCNews title subset",
+  "source_commit": "6cb26819af7b646275aff8a4693676f2849e67f6",
+  "source_sha256": "ba6fcbbb8fb809a9eb2be443b6b4db533c147861d94ebe0931b8c6092d8abe94",
+  "provenance": "公开真实新闻标题 / THUCNews 10类第三方子集 / 固定预算研究",
+  "input_rows": 200000,
+  "accepted_rows": 29991,
+  "rejected_rows": 1302,
+  "available_clean_train": 178707,
+  "budget_omitted_train": 168707,
+  "source_counts": {
+    "train": 180000,
+    "validation": 10000,
+    "test": 10000
+  },
+  "train_per_class": 1000,
+  "selection_seed": 1729,
+  "seed": 1729,
+  "split_policy": "保留来源 train/dev/test；只从 clean train 按类固定抽样；dev 与 test 重叠行移出 dev",
+  "normalization": "NFKC + remove format/control + whitespace; dedup key casefold",
+  "duplicate_policy": "retain_within_evaluation_only",
+  "heldout_duplicate_groups": {
+    "validation": [
+      {
+        "lines": [
+          420,
+          6966
+        ],
+        "labels": [
+          "股票"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          702,
+          5014
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          1029,
+          1369,
+          9533
+        ],
+        "labels": [
+          "股票"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          2576,
+          4444
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          5017,
+          9212
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      }
+    ],
+    "test": [
+      {
+        "lines": [
+          2634,
+          9667
+        ],
+        "labels": [
+          "股票",
+          "财经"
+        ],
+        "conflicting": true
+      },
+      {
+        "lines": [
+          5027,
+          5858
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          5116,
+          5941
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          5141,
+          5265
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          5215,
+          5306
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          5336,
+          5945
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          5691,
+          5785
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          5797,
+          5809
+        ],
+        "labels": [
+          "房产"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          9309,
+          9366
+        ],
+        "labels": [
+          "股票"
+        ],
+        "conflicting": false
+      },
+      {
+        "lines": [
+          9368,
+          9497,
+          9644
+        ],
+        "labels": [
+          "股票"
+        ],
+        "conflicting": false
+      }
+    ]
+  },
+  "counts": {
+    "train": {
+      "股票": 1000,
+      "社会": 1000,
+      "娱乐": 1000,
+      "体育": 1000,
+      "教育": 1000,
+      "科技": 1000,
+      "时政": 1000,
+      "游戏": 1000,
+      "财经": 1000,
+      "房产": 1000
+    },
+    "validation": {
+      "游戏": 1000,
+      "社会": 1000,
+      "股票": 995,
+      "财经": 1000,
+      "体育": 1000,
+      "房产": 997,
+      "教育": 999,
+      "时政": 1000,
+      "科技": 1000,
+      "娱乐": 1000
+    },
+    "test": {
+      "教育": 1000,
+      "娱乐": 1000,
+      "财经": 1000,
+      "游戏": 1000,
+      "时政": 1000,
+      "房产": 1000,
+      "科技": 1000,
+      "社会": 1000,
+      "体育": 1000,
+      "股票": 1000
+    }
+  },
+  "split_sha256": {
+    "train": "e5d6bddac5fc234f54ff59779413f486e9610ecd06712da13642756049359409",
+    "validation": "69e89ba636d9f9fc76dbbab9fb98cac865454ee10d1ff7e63a9901b36c85c1dd",
+    "test": "c17b127780485a4ee2bd6926477d2ce1fb80dfc55845ad21d5671e2c7ed5ecd1"
+  },
+  "dataset_sha256": "f7c0af5c473788ac0165e359d3dce54930d1dced8fc8ca3a48f14c9278d8f5d5",
+  "limitations": [
+    "随机预算子集，未使用全部 180,000 原始训练标题",
+    "第三方标题子集，不等于官方 THUCNews 全文基准",
+    "规范化去重不能消除语义近重复；公开语料可能与预训练数据重叠",
+    "原 test 重复或冲突标签保留并披露"
+  ]
+}

@@ -145,7 +145,7 @@ def prepare(source: Path, destination: Path, seed=42, provenance="user-provided"
 def load_dataset(path: Path):
     manifest = read_json(path / "manifest.json")
     rows = {}
-    seen = set()
+    seen = {}
     labels = set(manifest["labels"])
     for split in SPLITS:
         file = path / f"{split}.jsonl"
@@ -156,9 +156,11 @@ def load_dataset(path: Path):
             raise ValueError(f"空划分: {split}")
         for row in rows[split]:
             k = key(row["text"])
-            if k in seen or row["label"] not in labels or row["split"] != split:
+            retained_eval_duplicate = (manifest.get("duplicate_policy") == "retain_within_evaluation_only"
+                                       and split in ("validation", "test") and seen.get(k) == split)
+            if (k in seen and not retained_eval_duplicate) or row["label"] not in labels or row["split"] != split:
                 raise ValueError("数据重复、标签或 split 与数据版本不符")
-            seen.add(k)
+            seen[k] = split
     expected = hashlib.sha256(json.dumps(manifest["split_sha256"], sort_keys=True).encode()).hexdigest()
     if expected != manifest["dataset_sha256"]:
         raise ValueError("数据版本总指纹不匹配")

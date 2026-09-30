@@ -29,6 +29,14 @@ def parser():
     a.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     a.add_argument("--allow-download", action="store_true")
     a.add_argument("--lora-targets", default="query,value")
+    a.add_argument("--baseline-model", choices=["logistic", "linear_svm"], default="logistic")
+    a.add_argument("--regularization", choices=["ce", "rdrop", "fgm", "rdrop_fgm"], default="ce")
+    a.add_argument("--rdrop-alpha", type=float, default=.5)
+    a.add_argument("--fgm-epsilon", type=float, default=.5)
+    a.add_argument("--adversarial-weight", type=float, default=.5)
+    a.add_argument("--schedule", choices=["constant", "cosine"], default="constant")
+    a.add_argument("--warmup-ratio", type=float, default=0.)
+    a.add_argument("--mixed-precision", choices=["fp32", "fp16", "bf16"], default="fp32")
     a = sub.add_parser("evaluate")
     a.add_argument("--run", required=True)
     a.add_argument("--split", choices=["validation", "test"], default="test")
@@ -69,7 +77,11 @@ def main():
             execute_run(run)
             result = {"run": run.name, "path": str(run)}
         elif args.command == "evaluate":
-            result = evaluate_run(safe_child(workspace / "runs", args.run), args.split, args.device)
+            run = safe_child(workspace / "runs", args.run)
+            from .data import read_json
+            if read_json(run / "run.json").get("research_protocol"):
+                raise ValueError("研究评测产物由冻结协议生成，请运行 scripts.run_research 或查看已有结果")
+            result = evaluate_run(run, args.split, args.device)
         elif args.command == "predict":
             result = Predictor(safe_child(workspace / "runs", args.run)).predict(args.text)
         elif args.command == "compare":

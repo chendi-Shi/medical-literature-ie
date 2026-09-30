@@ -8,8 +8,9 @@ from nlp_lab.data import load_dataset, prepare, read_json
 from nlp_lab.training import Predictor, TrainConfig, allocate_run, evaluate_run, execute_run
 
 
-@pytest.mark.parametrize("method", ["full", "lora", "head"])
-def test_neural_checkpoint_reload_and_trainable_parameters(tmp_path, method):
+@pytest.mark.parametrize("method,regularization", [("full", "ce"), ("lora", "ce"), ("head", "ce"),
+                                                  ("full", "rdrop"), ("full", "fgm"), ("full", "rdrop_fgm")])
+def test_neural_checkpoint_reload_and_trainable_parameters(tmp_path, method, regularization):
     torch = pytest.importorskip("torch")
     transformers = pytest.importorskip("transformers")
     if method == "lora":
@@ -32,7 +33,8 @@ def test_neural_checkpoint_reload_and_trainable_parameters(tmp_path, method):
     dataset = tmp_path / "datasets" / "tiny"
     prepare(source, dataset)
     run = allocate_run(tmp_path, dataset, TrainConfig(backend="transformer", model=str(pretrained), method=method,
-                                                     epochs=1, max_length=16, batch_size=3, accumulation=3, device="cpu"))
+                                                     epochs=1, max_length=16, batch_size=3, accumulation=3, device="cpu",
+                                                     regularization=regularization))
     execute_run(run)
     meta = read_json(run / "run.json")
     assert meta["status"] == "completed"

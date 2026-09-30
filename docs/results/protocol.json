@@ -1,0 +1,106 @@
+{
+  "schema_version": 2,
+  "id": "thucnews-10k-v2",
+  "created_at": "2026-09-30T16:00:31.842726+00:00",
+  "dataset": "thucnews-10000-s1729",
+  "dataset_sha256": "f7c0af5c473788ac0165e359d3dce54930d1dced8fc8ca3a48f14c9278d8f5d5",
+  "split_sha256": {
+    "train": "e5d6bddac5fc234f54ff59779413f486e9610ecd06712da13642756049359409",
+    "validation": "69e89ba636d9f9fc76dbbab9fb98cac865454ee10d1ff7e63a9901b36c85c1dd",
+    "test": "c17b127780485a4ee2bd6926477d2ce1fb80dfc55845ad21d5671e2c7ed5ecd1"
+  },
+  "labels": [
+    "体育",
+    "娱乐",
+    "房产",
+    "教育",
+    "时政",
+    "游戏",
+    "社会",
+    "科技",
+    "股票",
+    "财经"
+  ],
+  "question": "相同训练样本、优化器预算和小编码器下，R-Drop 与 FGM 能否改善分类与合成扰动稳定性？额外计算成本是否值得？",
+  "source": {
+    "repository": "649453932/Chinese-Text-Classification-Pytorch",
+    "commit": "6cb26819af7b646275aff8a4693676f2849e67f6"
+  },
+  "baseline_models": [
+    "logistic",
+    "linear_svm"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "variants": [
+    "ce",
+    "rdrop",
+    "fgm",
+    "rdrop_fgm"
+  ],
+  "neural_config": {
+    "backend": "transformer",
+    "model": "BAAI/bge-small-zh-v1.5",
+    "method": "full",
+    "epochs": 2,
+    "batch_size": 16,
+    "accumulation": 2,
+    "learning_rate": 3e-05,
+    "max_length": 48,
+    "seed": 42,
+    "device": "auto",
+    "patience": 2,
+    "allow_download": false,
+    "lora_rank": 8,
+    "lora_targets": "query,value",
+    "baseline_model": "logistic",
+    "regularization": "ce",
+    "rdrop_alpha": 0.5,
+    "fgm_epsilon": 0.5,
+    "adversarial_weight": 0.5,
+    "schedule": "cosine",
+    "warmup_ratio": 0.06,
+    "mixed_precision": "fp16"
+  },
+  "selection": "每次实验按完整 validation Macro-F1 选 checkpoint；方法选择只看三种种子的 validation 平均值",
+  "test_policy": "所有配方训练完成后才开始 test；不根据 test 调参；保留全部来源 test 行与标签",
+  "robustness": {
+    "per_class": 200,
+    "seed": 2027,
+    "modes": [
+      "clean_subset",
+      "punctuation",
+      "char_delete_5pct",
+      "tail_truncate_30pct"
+    ]
+  },
+  "calibration": {
+    "method": "single temperature",
+    "temperature_bounds": [
+      0.1,
+      100
+    ],
+    "fit_split": "validation",
+    "ece_bins": 15,
+    "selective_validation_coverage": 0.8,
+    "note": "checkpoint 选择与温度拟合共用 validation；不宣称独立校准集"
+  },
+  "paired_bootstrap": {
+    "replicates": 400,
+    "seed": 31415,
+    "ci": 0.95,
+    "scope": "按类对测试样本配对重采样，固定三种训练种子；不覆盖训练随机性的总体不确定性"
+  },
+  "compute_policy": "相同样本和 optimizer-step 预算，不同方法的前向/反向次数不同；另报实际训练时间和显存，非相同 FLOPs 对照",
+  "source_code_sha256": {
+    "training.py": "5cead174cc675e7ec59457f78ecea5ae50ec2b75729fb084e3ea564ddc0fbd77",
+    "algorithms.py": "9a0af1444bcaa1ff9f423dfbe19e38878a2a971a3f6a4eb6660d00e8e66b4eea",
+    "benchmark.py": "efb34ca6e9de6fd735e53cc688f0803a7a594995f6506d688b71c5391e106d32",
+    "metrics.py": "cd3127762bcc37ca2e2486278d359a42b3ce7ac6fe0992a0d233a297663aef7e",
+    "research.py": "1d1225583194bc9207ea407d360101f0b79d9d815d63388080330caea7620226"
+  },
+  "novelty": "对已有 R-Drop / FGM 的任务适配与组合实验，非原创算法声明"
+}

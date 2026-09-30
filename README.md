@@ -1,82 +1,67 @@
-# NLP Training Lab
+# NLP Classification Research Lab · v0.2
 
-中文文本分类的完整训练项目：**数据清洗 → 固定划分 → 传统基线 → 预训练模型微调 → 独立评测 → 推理**。附本地网页工作台、CLI、代码研究依据和测试。
+真实中文多类别文本分类研究项目：数据清洗、稀疏强基线、预训练编码器微调、模型改进、三种随机种子、因子消融、扰动评测和校准推理。网页默认展示研究结果，原 90 条合成样本仅保留作流程自测。
 
-首版任务是单标签分类，内置体育 / 科技 / 财经三类中文主题示例。它是学习与实验原型；“更好的方案”指数据治理、实验可追溯性和适合本机资源的任务设计，不表示模型效果已超过研究的开源框架。
+本轮使用第三方 THUCNews **新闻标题**十类子集：从 180,000 条来源训练数据中清洗得到 178,707 条，固定每类抽取 1,000 条训练；验证 9,991 条、测试 10,000 条。完整来源测试行及标签保留，验证 / 测试内部重复与冲突披露。它不是官方 THUCNews 全文基准。
 
-## 在这台电脑上使用
+## 使用
 
-双击 `start.cmd`，或运行 `./start.ps1`，打开 **http://127.0.0.1:8778**。当前复用 `C:/anaconda/envs/dsproject/python.exe`，不升级现有 Python 环境。默认读取本地模型缓存，不联网下载。
+双击 `start.cmd` 或执行 `./start.ps1`，访问 http://127.0.0.1:8778 。本机使用 `C:/anaconda/envs/dsproject/python.exe`，RTX 3050 Ti Laptop 4GB；无需升级已有环境。
 
-- 「实验工作台」选择数据版本，启动 CPU 基线或 Transformer 微调。
-- 「数据与审计」导入 CSV / JSONL，查看分布、划分与 SHA-256 指纹。
-- 点击实验查看训练 loss、验证 Macro-F1、配置、混淆矩阵与错误样本。
-- 训练完成后单独点击「评测测试集」，再在「模型推理」输入文本。
-- 全参数、LoRA、仅分类头三种方法共用同一数据和评测流程。默认 BGE-small-zh，是预训练中文编码器初始化的分类模型；此项目没有训练句向量检索目标。
+- 研究总览：14 次实验进度、三种子均值与标准差、消融置信区间、鲁棒性、计算成本。
+- 实验工作台：查看保存 checkpoint 的混淆矩阵、逐条错误、loss 与验证曲线；运行经过温度校准的推理；新增独立实验。
+- 数据与审计：导入自己的 CSV / JSONL，核验划分、标签、来源与 SHA-256。
+- 方法与依据：固定 GitHub 代码版本、R-Drop / FGM 来源及实现边界。
 
-内置 **90 条原创人工编写的合成示例**，每类 30 条，固定 seed=42 划分为 54 train / 18 validation / 18 test。分数只能用于验证流程，不能代表真实业务效果。网页中的每个实验会显示来源说明。
+## 复现实验
 
-## CLI
-
-以下命令在项目目录执行，本机请将 `python` 替换为 `& 'C:/anaconda/envs/dsproject/python.exe'`：
+在项目目录执行；本机把 `python` 替换为 `& 'C:/anaconda/envs/dsproject/python.exe'`。
 
 ```powershell
-# 完整 CPU 自检，包括训练、独立测试集评测和模型保存
-python -m nlp_lab.cli demo
-# 真正从预训练中文编码器微调，并重新加载最佳模型做测试
-python -m nlp_lab.cli demo --transformer --method full
-python -m nlp_lab.cli demo --transformer --method lora
-# 接入你的数据
-python -m nlp_lab.cli prepare data/my-data.jsonl --name my-data-v1 --provenance "来源、许可与采样说明"
-python -m nlp_lab.cli train --dataset my-data-v1 --backend baseline
-python -m nlp_lab.cli train --dataset my-data-v1 --backend transformer --method lora --learning-rate 0.0003 --batch-size 4 --accumulation 2
-# 使用 train 返回的实际实验 ID 替换下面的 RUN_ID
+# 下载固定 Git 提交的数据文件，校验 Git blob SHA 和 SHA-256，生成清洗审计
+python -m scripts.prepare_research
+# 运行 2 个稀疏基线 + 4 种神经配方 × 3 seeds；已有匹配产物会复用
+python -m scripts.run_research
+# 可选图表依赖：pip install -e ".[report]"；核验并导出 PNG / PDF 与逐种子证据
+python -m scripts.export_research
+# 测试与本地服务
+python -m pytest -q
+python -m nlp_lab.cli serve --port 8778
+```
+
+模型默认读取本地缓存，预训练初始化为 `BAAI/bge-small-zh-v1.5`。本轮模型修订、实际依赖、设备与参数量记录在每个 run 中；不执行远端自定义代码。新机器需要先准备该模型权重，或对单次训练显式传入 `--allow-download`。
+
+研究配方在 `workspace/research/thucnews-10k-v2/protocol.json` 训练前冻结；算法源码改变后，套件拒绝混入旧协议。所有训练完成后才统一评测测试集。浏览器与普通 CLI 拒绝覆盖研究套件的评测产物。失败后套件可重跑，复用完成实验；未完成的单个训练会从头重训，本版没有 checkpoint 断点续训。
+
+## 本轮方法
+
+TF-IDF 字符 1–3 gram、最多 60,000 特征，分别配 balanced Logistic Regression 与 Linear SVM，词表 / IDF / 分类器只拟合 train。神经模型是 BGE-small-zh 初始化的分类编码器，不使用检索损失：全参数微调，CE、R-Drop、FGM、R-Drop+FGM，seeds 42/43/44。固定 2 epochs、batch 16、累积 2、LR 3e-5、cosine、warmup 6%、48 tokens、FP16。R-Drop α=.5，FGM ε=.5，对抗损失权重=.5。
+
+所有方法使用相同数据；神经方法使用相同优化器步数预算，但额外正则化的计算量不同。报告实际训练时间、PyTorch 峰值分配显存与单次打分吞吐。选 checkpoint 和方法只看验证 Macro-F1；不按最佳测试种子汇报。
+
+评测包含完整测试集 Macro-F1 / accuracy / 每类指标 / 混淆矩阵 / 错误样本；三种子均值和样本标准差；相对 CE 的按类配对 bootstrap 条件 95% 区间；同组 2,000 条文本的标点、删字、截断压力测试。单温度在验证集拟合，报告 NLL、Brier、15-bin ECE 和拒判阈值的测试覆盖率。校准与选模共用 validation，并非独立校准集。
+
+实测数值与结论见 [研究结果](docs/RESULTS_V2.md)，固定实验细节见 [实验协议](docs/EXPERIMENT_PROTOCOL.md)，来源与代码分析见 [开源研究](docs/RESEARCH_V2.md)。组合已有方法，不声明原创算法。
+
+## 独立实验 / 自有数据
+
+```powershell
+python -m nlp_lab.cli prepare data/my-data.jsonl --name my-data-v1 --provenance "来源与采样说明"
+python -m nlp_lab.cli train --dataset my-data-v1 --backend baseline --baseline-model linear_svm
+python -m nlp_lab.cli train --dataset my-data-v1 --backend transformer --regularization rdrop_fgm --epochs 2 --batch-size 16 --accumulation 2 --max-length 48 --learning-rate 0.00003 --schedule cosine --warmup-ratio 0.06 --mixed-precision fp16
 python -m nlp_lab.cli evaluate --run RUN_ID --split test
 python -m nlp_lab.cli predict --run RUN_ID --text "球队进入决赛"
-python -m nlp_lab.cli compare BASELINE_RUN TRANSFORMER_RUN --split validation
-python -m pytest -q
+python -m nlp_lab.cli compare RUN_1 RUN_2 --split validation
 ```
 
-所有命令支持前置 `--workspace PATH` 指定隔离工作区。API 文档在 `/docs`。
+JSONL 行格式为 `{"text":"球队进入决赛","label":"体育","split":"train"}`，CSV 为同名列。UTF-8；split 可省略，自动按类固定种子划分。一般用户数据的跨划分重叠直接拒绝，同文本冲突标签隔离、同划分重复保留首条。公开基准专门按保留来源测试集的策略处理，详见 [数据说明](docs/DATA_CARD.md)。两种策略不能混为一谈。
 
-## 数据格式和清洗规则
+独立实验支持全参数、LoRA 和冻结编码器；本版 FGM 必须使用全参数模型的可训练嵌入，不能与 LoRA / head 组合。FP16 / BF16 需要支持的 CUDA 设备，CPU 使用 FP32。普通训练不自动拟合温度；研究套件会保存 calibration.json，推理重载后自动使用。
 
-JSONL 每行是 `{"text":"球队进入决赛","label":"体育"}`。CSV 第一行是 `text,label`。统一要求 UTF-8；label 为字符串。可另加 `split`，只允许 `train` / `validation` / `test`。一旦使用显式划分，所有有效记录都必须指定；三份划分必须非空，评测标签必须在 train 中出现。
+## 架构与产物
 
-未提供 split 时，每类至少 5 条独立文本；先按类别和规范化文本排序，再用 seed 洗牌。validation/test 各为 `max(1, floor(每类数量×0.2))`，其余进入 train。更严谨的按用户、文档、时间划分应在导入前完成，并提供 split。
+`benchmark.py` 下载和清洗真实基准；`data.py` 版本与完整性；`algorithms.py` 正则化；`training.py` 训练和推理；`research.py` 冻结实验 / 校准 / 统计；`api.py` 与 `web/` 为本地工作台。
 
-清洗使用 NFKC、移除格式/控制字符、合并空白；去重键额外 casefold。空样本、超长文本、非法标签类型被排除并记录来源行号；同一文本冲突标注全部隔离；同划分重复保留首条；跨划分重叠直接拒绝，避免静默改动测试集。**精确去重无法保证消除语义近重复。**
+`workspace/datasets/` 保存数据、审计和来源行号；`workspace/runs/` 保存配置、历史、模型、评测、原始打分和扰动错误；`workspace/research/` 保存协议、固定扰动、状态和汇总。数据 / 权重不提交 Git；可分享的数值报告与协议快照在 `docs/results/`。查看 [架构](docs/ARCHITECTURE.md) 和 [本机验证记录](docs/VALIDATION_V2.md)。
 
-数据目录含 `manifest.json`、`audit.json` 和三个 JSONL 划分。每次加载核验文件指纹和标签，训练分配后或评测前发生篡改会拒绝。完整性检查会读取所有划分，但测试数据不参与拟合、梯度更新或选模。
-
-## 训练与评测
-
-- **基线**：字符 1–3 gram TF-IDF + balanced Logistic Regression；词表、IDF 和分类器只拟合 train。验证集不调整这条基线的参数。
-- **微调**：Hugging Face 分类模型 + PyTorch 自定义训练循环，单标签交叉熵、AdamW、固定学习率、梯度裁剪；按实际累积窗口样本数平均梯度，正确处理不足 batch 和尾部窗口。当前使用 FP32。
-- **LoRA**：PEFT `SEQ_CLS`，默认 query/value、rank=8、alpha=16、dropout=0.05。分类头与 adapter 一起保存；基础模型需在缓存中可用。其他模型的模块名不同，应通过 `--lora-targets` 指定。
-- **仅分类头**：冻结预训练编码器；保留随机初始化分类头训练，适合低显存试验。
-- **选模**：每轮评测 validation，按最高 Macro-F1 保存模型；没有提升达到 patience 后早停。相同分数保留更早 checkpoint。
-- **指标**：accuracy、Macro-F1、weighted F1、log loss、每类 precision/recall/F1 和混淆矩阵；固定全标签集合，报告缺失支持类别。
-- **解释**：逐条真实标签、预测、概率与错误样本；输出概率未经校准。
-- **对照**：CLI 拒绝混用数据版本、标签映射或评测指纹，网页单个实验不跨数据集排名。
-
-不依赖第三方追踪服务。每个实验独立保存配置、来源、数据指纹、随机种子、实际版本、设备、参数量、截断数量、历史曲线、最佳 epoch 和模型。`workspace/.training.lock` 防止同一工作区并行训练；进程异常被杀后可能留下锁，确认记录的 PID 已退出后才移除锁并重跑。
-
-## 新机器安装
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -e ".[training,test]"
-python -m nlp_lab.cli train --dataset my-data-v1 --backend transformer --model BAAI/bge-small-zh-v1.5 --allow-download
-```
-
-CUDA 对应的 PyTorch wheel 根据设备安装。`requirements-tested.txt` 记录本机验证版本；`pyproject.toml` 约束已验证的 Transformers / PEFT 小版本。下载模型须显式 `--allow-download`；默认不执行远端自定义代码。离线先跑基线无需模型权重。
-
-## 文件入口与边界
-
-`nlp_lab/data.py` 为清洗与划分；`training.py` 为训练、加载和对照；`metrics.py` 为指标；`api.py` / `web/index.html` 为本地工作台；`tests/` 覆盖泄漏拒绝、指纹、标签映射、模型重新加载、对照限制与 API。
-
-研究细节见 [docs/RESEARCH.md](docs/RESEARCH.md)，架构与路线见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)，本机运行记录见 [docs/VALIDATION.md](docs/VALIDATION.md)。
-
-本版尚不包含 NER、生成式 SFT/DPO、多机训练、断点续训、超参搜索、近重复检测、概率校准、多人认证与生产部署。模型加载只用于本项目生成的可信本地模型产物；服务仅绑定回环地址。
+新机器：`pip install -e ".[training,test]"`；CUDA PyTorch 安装源按设备选择。`requirements-tested.txt` 是本机实际版本。服务为本地单用户工具，只绑定 127.0.0.1。当前未实现近重复清理、真实业务外部测试、多 GPU、断点续训、NER、生成式 SFT/DPO 或生产服务部署。此轮数据规模和预算不能与来源仓库 180k 训练结果直接比较。
