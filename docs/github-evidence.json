@@ -1,0 +1,108 @@
+{
+  "checked_at": "2026-09-30",
+  "scope": "task-fit review; no upstream performance benchmark",
+  "repositories": [
+    {
+      "repository": "huggingface/transformers",
+      "commit": "f339035b986aaf719bc6f5ea92342f73c498cb0e",
+      "date": "2026-09-29T15:54:20Z",
+      "path": "examples/pytorch/text-classification/run_classification.py",
+      "url": "https://github.com/huggingface/transformers/blob/f339035b986aaf719bc6f5ea92342f73c498cb0e/examples/pytorch/text-classification/run_classification.py",
+      "source_lines": 747,
+      "observations": [
+        {
+          "line": 635,
+          "text": "                metric = evaluate.load(\"accuracy\", cache_dir=model_args.cache_dir)"
+        },
+        {
+          "line": 636,
+          "text": "                logger.info(\"Using accuracy as classification score, you can use --metric_name to overwrite.\")"
+        },
+        {
+          "line": 638,
+          "text": "    def compute_metrics(p: EvalPrediction):"
+        },
+        {
+          "line": 669,
+          "text": "        compute_metrics=compute_metrics,"
+        },
+        {
+          "line": 685,
+          "text": "        trainer.save_model()  # Saves the tokenizer too for easy upload"
+        }
+      ]
+    },
+    {
+      "repository": "hiyouga/LlamaFactory",
+      "commit": "ce9dc9e072f80fa3abe0989d4ab90da25f083438",
+      "date": "2026-09-28T09:10:59Z",
+      "path": "src/llamafactory/data/loader.py",
+      "url": "https://github.com/hiyouga/LlamaFactory/blob/ce9dc9e072f80fa3abe0989d4ab90da25f083438/src/llamafactory/data/loader.py",
+      "source_lines": 337,
+      "observations": [
+        {
+          "line": 25,
+          "text": "from .data_utils import get_dataset_module, merge_dataset, read_cloud_json, split_dataset"
+        },
+        {
+          "line": 315,
+          "text": "        train_dict, eval_dict = split_dataset(dataset, eval_dataset, data_args, seed=training_args.seed)"
+        }
+      ]
+    },
+    {
+      "repository": "huggingface/sentence-transformers",
+      "commit": "4a3b5cd6ec718e421f57e824a41ed3fd99595df6",
+      "date": "2026-09-21T19:39:06Z",
+      "path": "sentence_transformers/sentence_transformer/trainer.py",
+      "url": "https://github.com/huggingface/sentence-transformers/blob/4a3b5cd6ec718e421f57e824a41ed3fd99595df6/sentence_transformers/sentence_transformer/trainer.py",
+      "source_lines": 169,
+      "observations": [
+        {
+          "line": 19,
+          "text": "from sentence_transformers.base.trainer import BaseTrainer"
+        },
+        {
+          "line": 36,
+          "text": "class SentenceTransformerTrainer(BaseTrainer):"
+        },
+        {
+          "line": 73,
+          "text": "        evaluator (Union[:class:`~sentence_transformers.base.evaluation.BaseEvaluator`,\\"
+        },
+        {
+          "line": 75,
+          "text": "            The evaluator instance for useful evaluation metrics during training. You can use an ``evaluator`` with"
+        },
+        {
+          "line": 76,
+          "text": "            or without an ``eval_dataset``, and vice versa. Generally, the metrics that an ``evaluator`` returns"
+        },
+        {
+          "line": 77,
+          "text": "            are more useful than the loss value returned from the ``eval_dataset``. A list of evaluators will be"
+        },
+        {
+          "line": 124,
+          "text": "        loss: nn.Module"
+        },
+        {
+          "line": 129,
+          "text": "        evaluator: BaseEvaluator | list[BaseEvaluator] | None = None,"
+        },
+        {
+          "line": 137,
+          "text": "        compute_metrics: Callable[[EvalPrediction], dict] | None = None,"
+        },
+        {
+          "line": 149,
+          "text": "            evaluator=evaluator,"
+        },
+        {
+          "line": 153,
+          "text": "            compute_metrics=compute_metrics,"
+        }
+      ]
+    }
+  ]
+}
