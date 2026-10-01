@@ -20,7 +20,7 @@
 
 本轮固定 **10,000 训练 / 2,000 验证 / 4,000 测试**，只保留不超过 128 tokens 的记录。训练包含 **18,243 个二元关系槽位**，覆盖 **55 槽位、26 实体类型**。验证与测试是来源 dev 的不重叠子集，官方无公开标签的 test 未用于评测。
 
-两种架构共享 `BAAI/bge-small-zh-v1.5` 中文编码器（4 层、约 24M 参数），6 epochs、batch 8 × 累积 4、LR 3e-5、cosine、warmup .06、FP16；主模型 seed42/43，另训练冻结编码器 seed42。每轮验证选 checkpoint，验证网格选择 logit 阈值，再统一打开测试集。部署按验证均值选架构，固定 seed42。
+三种方法共享 `BAAI/bge-small-zh-v1.5` 中文编码器（4 层、约 24M 参数），6 epochs、batch 8 × 累积 4、LR 3e-5、cosine、warmup .06、FP16；主模型 seed42/43，另训练冻结编码器 seed42。每轮验证选 checkpoint，验证网格选择 logit 阈值，再统一打开测试集。部署按验证均值选架构，固定 seed42。
 
 实体指标只覆盖关系参与者的派生字符跨度，不是独立完整 NER 基准。关系按带类型主客体表面字符串及 predicate/slot 精确匹配，复杂 object 展开为二元槽位；**不等于官方 DuIE 完整多槽 SPO 指标**。首次精确匹配存在重复提及位置歧义。当前预算和指标不能直接对比来源仓库分数。
 
@@ -34,12 +34,12 @@ python -m scripts.run_ie
 python -m scripts.run_ie_context
 python -m scripts.export_ie
 python -m scripts.analyze_ie
-python -m nlp_lab.ie.cli train --architecture joint --epochs 6 --seed 42
-python -m nlp_lab.ie.cli extract --run RUN_ID --text "刘慈欣是《三体》的作者。"
-python -m nlp_lab.ie_context workspace/ie/runs/CONTEXT_RUN_ID "刘慈欣是《三体》的作者。"
-python -m nlp_lab.ie.cli evaluate --run INDEPENDENT_RUN_ID --split test
+python -m nlp_lab.ie_commands train --architecture joint --epochs 6 --seed 42
+python -m nlp_lab.ie_commands extract --run RUN_ID --text "刘慈欣是《三体》的作者。"
+python -m nlp_lab.ie_commands extract --run CONTEXT_RUN_ID --text "刘慈欣是《三体》的作者。"
+python -m nlp_lab.ie_commands evaluate --run INDEPENDENT_RUN_ID --split test
 python -m nlp_lab.ie_import own.jsonl --schema own-schema.json --name own-v1
-python -m nlp_lab.ie.cli train --dataset own-v1 --architecture joint --epochs 6
+python -m nlp_lab.ie_commands train --dataset own-v1 --architecture joint --epochs 6
 python -m pytest -q
 python -m nlp_lab.cli serve --port 8778
 ```
@@ -50,7 +50,7 @@ python -m nlp_lab.cli serve --port 8778
 
 研究在训练前冻结代码和数据指纹、配方与评测政策；改动核心源码会拒绝混入旧套件。失败训练从头重训，已完成且匹配协议的实验可复用，目前没有 optimizer 断点续训。普通 CLI 禁止覆写研究评测产物。
 
-早期纯流程自测曾使用前 12 条测试文本核验小规模 checkpoint 重载，未用于正式选模或阈值；五个正式模型的完整测试在训练和验证选择后统一执行。分组报告另外核验排除这 12 条后的 3,988 条关系指标，详见 [流程披露](docs/IE_RESEARCH.md) 与 [难度分组](docs/IE_SUBGROUPS.md)。
+早期纯流程自测曾使用前 12 条测试文本核验小规模 checkpoint 重载，未用于正式选模或阈值；原组五个正式模型在该组训练和验证选择后统一评测；新增上下文两种子在两次扩展训练和验证选择后统一评测，配方在原组测试开始前固定。分组报告另外核验排除这 12 条后的 3,988 条关系指标，详见 [流程披露](docs/IE_RESEARCH.md) 与 [难度分组](docs/IE_SUBGROUPS.md)。
 
 ## 目录
 
@@ -70,4 +70,4 @@ python -m nlp_lab.cli serve --port 8778
 
 扩展协议在原组测试开始前固定（[快照](docs/IE_CONTEXT_PROTOCOL.json)），另训练 seed42/43，沿用原训练器、数据、候选负例、损失和 6-epoch 预算。它通过进程内明确的模型工厂替换复用冻结训练器，原核心源码不改动。扩展两次训练及验证阈值选择后才做扩展测试；最终按三种方法的两种子验证均值选模型，不按测试结果挑种子。
 
-网页可独立训练上下文增强模型，推理及评测自动加载正确的抽取头。原 `nlp_lab.ie.cli extract` 适用原流水线/联合模型；增强模型使用上面的 `nlp_lab.ie_context` 命令或网页。两个研究套件均会校验冻结源码与数据指纹；要改模型，应建立新协议版本。
+网页可独立训练上下文增强模型，推理及评测自动加载正确的抽取头。统一入口 `nlp-ie` 或 `python -m nlp_lab.ie_commands` 自动适配三种抽取头，使用 `--architecture context_pipeline` 独立训练增强模型；网页也支持此流程。冻结核心的旧 CLI 留作版本证据，使用新公共入口。两个研究套件均会校验冻结源码与数据指纹；要改模型，应建立新协议版本。

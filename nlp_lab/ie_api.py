@@ -86,6 +86,7 @@ def router(workspace:Path):
                 result['state']['selected_run']=context['selected_run']
             elif result['state']['phase']=='completed':
                 result['state']['phase']=result['context_state']['phase']
+                if result['context_state'].get('error'):result['state']['error']=result['context_state']['error']
         return result
     @routes.get('/runs')
     def runs():

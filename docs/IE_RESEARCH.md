@@ -49,9 +49,9 @@
 ```powershell
 python -m scripts.prepare_ie
 python -m scripts.run_ie
-python -m nlp_lab.ie.cli train --architecture joint --epochs 6
-python -m nlp_lab.ie.cli extract --run RUN_ID --text "刘慈欣是《三体》的作者。"
-python -m nlp_lab.ie.cli evaluate --run INDEPENDENT_RUN_ID --split test
+python -m nlp_lab.ie_commands train --architecture joint --epochs 6
+python -m nlp_lab.ie_commands extract --run RUN_ID --text "刘慈欣是《三体》的作者。"
+python -m nlp_lab.ie_commands evaluate --run INDEPENDENT_RUN_ID --split test
 python -m nlp_lab.cli serve --port 8778
 ```
 

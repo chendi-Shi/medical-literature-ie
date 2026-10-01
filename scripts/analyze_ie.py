@@ -50,6 +50,8 @@ def analyze(workspace,output):
               'flow_smoke_disclosure':'正式套件前，前12条测试文本曾用于96训练/24验证的单轮流程自测和重载核验；未用于正式选模、阈值或质量超参选择。另报告排除这12条后的3988条关系指标。',
               'ambiguous_offset_documents':{s:sum(r['ambiguous_mentions']>0 for r in values) for s,values in rows.items()},
               'groups':{k:len(v) for k,v in groups.items()},'frequency_bands':bands,'results':results}
+    from scripts.ie_error_analysis import analyze_runs
+    artifact['error_categories']=analyze_runs(workspace,rows['test'],manifest,report['experiments'])
     save_json(root/'analysis.json',artifact);save_json(output/'subgroups.json',artifact)
     labels={'one_gold_slot':'单个金标槽位','multiple_gold_slots':'多个金标槽位','distinct_overlapping_spans':'不同边界跨度重叠',
             'non_overlapping_spans':'跨度不重叠','all_typed_surfaces_seen_in_train':'所有带类型表面字符串在 train 出现',
@@ -64,6 +66,12 @@ def analyze(workspace,output):
         text+=['','## 上下文与位置增强','']
         for group,label in labels.items():
             text += [f"- **{label}**：关系 F1 {100*results['context_pipeline'][group]['mean_relation_f1']:.2f}%。"]
+    text+=['','## 语义角色与实体漏检诊断','',
+           '只统计未用于早期流程自测的3,988条，固定seed42模型。实体条件比较精确表面字符串及类型，不额外要求派生位置一致；这与关系表面指标相容。错角色与遗漏类别可重叠，不能视为互斥因果归因。','']
+    for name,value in artifact['error_categories'].items():
+        c=value['counts']
+        text += [f"- **{name}**：双方实体表面/类型已检出但关系遗漏 {c.get('missing_despite_both_typed_surfaces_detected',0)}；参与者表面/类型缺失的关系遗漏 {c.get('missing_with_participant_surface_or_type_absent',0)}；金标实体对上多报错误角色 {c.get('extra_wrong_role_on_gold_typed_pair',0)}。"]
+        text += [f"  常见错角色："+'；'.join(f"{x['gold']} → {x['predicted']} ({x['count']})" for x in value['role_confusions'][:5])]
     text += ['',artifact['flow_smoke_disclosure'],'','“未出现”只比较本轮训练标注中的精确表面字符串和实体类型，不代表编码器预训练未见过；没有做实体链接或近重复排除。长尾分组按训练金标槽位频数，全测试集该槽位的正确/预测/金标数聚合为 Micro-F1。','',
              '[原始分组数值](ie-results/subgroups.json) · [主结果](IE_RESULTS.md)','']
     (output.parent/'IE_SUBGROUPS.md').write_text('\n'.join(text),encoding='utf-8',newline='\n')
