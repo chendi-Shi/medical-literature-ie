@@ -1,0 +1,425 @@
+{
+  "scope": "手写样例的真实HTTP推理核验，不能用作质量基准；时间含首次CPU加载，样本数不足以宣称生产延迟",
+  "selected_run": "20261001-024951-4e420649",
+  "checks": [
+    {
+      "seconds": 0.06192639999790117,
+      "result": {
+        "text": "😀刘慈欣是《三体》的作者。",
+        "entities": [
+          {
+            "id": "e0",
+            "text": "刘慈欣",
+            "type": "人物",
+            "start": 1,
+            "end": 4,
+            "confidence": 0.9793692395121374
+          },
+          {
+            "id": "e1",
+            "text": "三体",
+            "type": "图书作品",
+            "start": 6,
+            "end": 8,
+            "confidence": 0.9513815673294287
+          }
+        ],
+        "relations": [
+          {
+            "subject": "e1",
+            "object": "e0",
+            "predicate": "作者",
+            "slot": "@value",
+            "label": "作者",
+            "subject_text": "三体",
+            "object_text": "刘慈欣",
+            "confidence": 0.9513815673294287
+          }
+        ],
+        "windows": 1,
+        "offset_unit": "Python Unicode code points, end exclusive",
+        "thresholds": {
+          "entity": 0.0,
+          "relation": 0.0,
+          "selection_split": "validation",
+          "grid_results": [
+            {
+              "threshold": 0.0,
+              "relation_f1": 0.4889477167438782,
+              "entity_f1": 0.7072847682119205
+            },
+            {
+              "threshold": -0.5,
+              "relation_f1": 0.4532620320855615,
+              "entity_f1": 0.7063561547890037
+            },
+            {
+              "threshold": 0.5,
+              "relation_f1": 0.47156052503646084,
+              "entity_f1": 0.688382640964849
+            }
+          ]
+        },
+        "confidence_note": "sigmoid of minimum extraction logits, uncalibrated; not factual verification",
+        "limitations": "跨窗口关系无法保证抽取；仅支持已训练 schema；这是文本中关系的预测，不是事实核验。",
+        "candidate_limit_reached": false,
+        "relation_groups": [
+          {
+            "subject": "e1",
+            "object": "e0",
+            "predicate": "作者",
+            "slot": "@value",
+            "label": "作者",
+            "subject_text": "三体",
+            "object_text": "刘慈欣",
+            "confidence": 0.9513815673294287,
+            "subject_type": "图书作品",
+            "object_type": "人物",
+            "mention_links": [
+              {
+                "subject": "e1",
+                "object": "e0"
+              }
+            ]
+          }
+        ],
+        "relation_grouping": "exact typed surface + predicate/slot; mention links preserved, no alias or coreference resolution",
+        "run_id": "20261001-024951-4e420649",
+        "model_architecture": "context_pipeline"
+      }
+    },
+    {
+      "seconds": 0.060727899995981716,
+      "result": {
+        "text": "《霸王别姬》的导演是陈凯歌，主演为张国荣和巩俐。",
+        "entities": [
+          {
+            "id": "e0",
+            "text": "霸王别姬",
+            "type": "影视作品",
+            "start": 1,
+            "end": 5,
+            "confidence": 0.9167520848732055
+          },
+          {
+            "id": "e1",
+            "text": "陈凯歌",
+            "type": "人物",
+            "start": 10,
+            "end": 13,
+            "confidence": 0.9011932790876594
+          },
+          {
+            "id": "e2",
+            "text": "张国荣",
+            "type": "人物",
+            "start": 17,
+            "end": 20,
+            "confidence": 0.7093111279069936
+          }
+        ],
+        "relations": [
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "主演",
+            "slot": "@value",
+            "label": "主演",
+            "subject_text": "霸王别姬",
+            "object_text": "陈凯歌",
+            "confidence": 0.7135885540944449
+          },
+          {
+            "subject": "e0",
+            "object": "e2",
+            "predicate": "主演",
+            "slot": "@value",
+            "label": "主演",
+            "subject_text": "霸王别姬",
+            "object_text": "张国荣",
+            "confidence": 0.7093111279069936
+          },
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "导演",
+            "slot": "@value",
+            "label": "导演",
+            "subject_text": "霸王别姬",
+            "object_text": "陈凯歌",
+            "confidence": 0.8589954890805819
+          }
+        ],
+        "windows": 1,
+        "offset_unit": "Python Unicode code points, end exclusive",
+        "thresholds": {
+          "entity": 0.0,
+          "relation": 0.0,
+          "selection_split": "validation",
+          "grid_results": [
+            {
+              "threshold": 0.0,
+              "relation_f1": 0.4889477167438782,
+              "entity_f1": 0.7072847682119205
+            },
+            {
+              "threshold": -0.5,
+              "relation_f1": 0.4532620320855615,
+              "entity_f1": 0.7063561547890037
+            },
+            {
+              "threshold": 0.5,
+              "relation_f1": 0.47156052503646084,
+              "entity_f1": 0.688382640964849
+            }
+          ]
+        },
+        "confidence_note": "sigmoid of minimum extraction logits, uncalibrated; not factual verification",
+        "limitations": "跨窗口关系无法保证抽取；仅支持已训练 schema；这是文本中关系的预测，不是事实核验。",
+        "candidate_limit_reached": false,
+        "relation_groups": [
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "主演",
+            "slot": "@value",
+            "label": "主演",
+            "subject_text": "霸王别姬",
+            "object_text": "陈凯歌",
+            "confidence": 0.7135885540944449,
+            "subject_type": "影视作品",
+            "object_type": "人物",
+            "mention_links": [
+              {
+                "subject": "e0",
+                "object": "e1"
+              }
+            ]
+          },
+          {
+            "subject": "e0",
+            "object": "e2",
+            "predicate": "主演",
+            "slot": "@value",
+            "label": "主演",
+            "subject_text": "霸王别姬",
+            "object_text": "张国荣",
+            "confidence": 0.7093111279069936,
+            "subject_type": "影视作品",
+            "object_type": "人物",
+            "mention_links": [
+              {
+                "subject": "e0",
+                "object": "e2"
+              }
+            ]
+          },
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "导演",
+            "slot": "@value",
+            "label": "导演",
+            "subject_text": "霸王别姬",
+            "object_text": "陈凯歌",
+            "confidence": 0.8589954890805819,
+            "subject_type": "影视作品",
+            "object_type": "人物",
+            "mention_links": [
+              {
+                "subject": "e0",
+                "object": "e1"
+              }
+            ]
+          }
+        ],
+        "relation_grouping": "exact typed surface + predicate/slot; mention links preserved, no alias or coreference resolution",
+        "run_id": "20261001-024951-4e420649",
+        "model_architecture": "context_pipeline"
+      }
+    },
+    {
+      "seconds": 0.04591190000064671,
+      "result": {
+        "text": "鲁迅于1881年9月25日出生于浙江绍兴，是中国作家。",
+        "entities": [
+          {
+            "id": "e0",
+            "text": "鲁迅",
+            "type": "人物",
+            "start": 0,
+            "end": 2,
+            "confidence": 0.9379744475879275
+          },
+          {
+            "id": "e1",
+            "text": "中国",
+            "type": "国家",
+            "start": 22,
+            "end": 24,
+            "confidence": 0.7554025355014969
+          }
+        ],
+        "relations": [
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "国籍",
+            "slot": "@value",
+            "label": "国籍",
+            "subject_text": "鲁迅",
+            "object_text": "中国",
+            "confidence": 0.7554025355014969
+          }
+        ],
+        "windows": 1,
+        "offset_unit": "Python Unicode code points, end exclusive",
+        "thresholds": {
+          "entity": 0.0,
+          "relation": 0.0,
+          "selection_split": "validation",
+          "grid_results": [
+            {
+              "threshold": 0.0,
+              "relation_f1": 0.4889477167438782,
+              "entity_f1": 0.7072847682119205
+            },
+            {
+              "threshold": -0.5,
+              "relation_f1": 0.4532620320855615,
+              "entity_f1": 0.7063561547890037
+            },
+            {
+              "threshold": 0.5,
+              "relation_f1": 0.47156052503646084,
+              "entity_f1": 0.688382640964849
+            }
+          ]
+        },
+        "confidence_note": "sigmoid of minimum extraction logits, uncalibrated; not factual verification",
+        "limitations": "跨窗口关系无法保证抽取；仅支持已训练 schema；这是文本中关系的预测，不是事实核验。",
+        "candidate_limit_reached": false,
+        "relation_groups": [
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "国籍",
+            "slot": "@value",
+            "label": "国籍",
+            "subject_text": "鲁迅",
+            "object_text": "中国",
+            "confidence": 0.7554025355014969,
+            "subject_type": "人物",
+            "object_type": "国家",
+            "mention_links": [
+              {
+                "subject": "e0",
+                "object": "e1"
+              }
+            ]
+          }
+        ],
+        "relation_grouping": "exact typed surface + predicate/slot; mention links preserved, no alias or coreference resolution",
+        "run_id": "20261001-024951-4e420649",
+        "model_architecture": "context_pipeline"
+      }
+    },
+    {
+      "seconds": 0.06173719999787863,
+      "result": {
+        "text": "《三体》的作者是刘慈欣，出版社是重庆出版社。",
+        "entities": [
+          {
+            "id": "e0",
+            "text": "三体",
+            "type": "图书作品",
+            "start": 1,
+            "end": 3,
+            "confidence": 0.9417036804563008
+          },
+          {
+            "id": "e1",
+            "text": "刘慈欣",
+            "type": "人物",
+            "start": 8,
+            "end": 11,
+            "confidence": 0.9703918623140816
+          }
+        ],
+        "relations": [
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "作者",
+            "slot": "@value",
+            "label": "作者",
+            "subject_text": "三体",
+            "object_text": "刘慈欣",
+            "confidence": 0.9417036804563008
+          }
+        ],
+        "windows": 1,
+        "offset_unit": "Python Unicode code points, end exclusive",
+        "thresholds": {
+          "entity": 0.0,
+          "relation": 0.0,
+          "selection_split": "validation",
+          "grid_results": [
+            {
+              "threshold": 0.0,
+              "relation_f1": 0.4889477167438782,
+              "entity_f1": 0.7072847682119205
+            },
+            {
+              "threshold": -0.5,
+              "relation_f1": 0.4532620320855615,
+              "entity_f1": 0.7063561547890037
+            },
+            {
+              "threshold": 0.5,
+              "relation_f1": 0.47156052503646084,
+              "entity_f1": 0.688382640964849
+            }
+          ]
+        },
+        "confidence_note": "sigmoid of minimum extraction logits, uncalibrated; not factual verification",
+        "limitations": "跨窗口关系无法保证抽取；仅支持已训练 schema；这是文本中关系的预测，不是事实核验。",
+        "candidate_limit_reached": false,
+        "relation_groups": [
+          {
+            "subject": "e0",
+            "object": "e1",
+            "predicate": "作者",
+            "slot": "@value",
+            "label": "作者",
+            "subject_text": "三体",
+            "object_text": "刘慈欣",
+            "confidence": 0.9417036804563008,
+            "subject_type": "图书作品",
+            "object_type": "人物",
+            "mention_links": [
+              {
+                "subject": "e0",
+                "object": "e1"
+              }
+            ]
+          }
+        ],
+        "relation_grouping": "exact typed surface + predicate/slot; mention links preserved, no alias or coreference resolution",
+        "run_id": "20261001-024951-4e420649",
+        "model_architecture": "context_pipeline"
+      }
+    }
+  ],
+  "passed": [
+    "completed7",
+    "validation-selected-default",
+    "unicode-span",
+    "entity-reference",
+    "mention-grouping",
+    "server-attachment-json-roundtrip",
+    "bad-path400",
+    "oversize422",
+    "author-relation"
+  ]
+}

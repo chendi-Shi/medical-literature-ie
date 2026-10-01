@@ -2,6 +2,8 @@
 import argparse
 import hashlib
 import json
+import copy
+import math
 from pathlib import Path
 import numpy as np
 from nlp_lab.data import read_json,save_json
@@ -27,7 +29,7 @@ def export(workspace,output):
         assert context['protocol']['created_at']<read_json(workspace/'ie/research'/DATASET/'state.json')['test_opened_at']
         assert len(context['experiments'])==2
         report={**report,'experiments':report['experiments']+context['experiments'],
-                'aggregates':{**report['aggregates'],**context['aggregates']},'context_protocol':context['protocol'],
+                'aggregates':{**report['aggregates'],**copy.deepcopy(context['aggregates'])},'context_protocol':context['protocol'],
                 'context_paired_seed42':context['paired_seed42'],'finished_at':context['finished_at'],
                 'validation_means':context['validation_means'],'selected_architecture':context['selected_architecture'],'selected_run':context['selected_run']}
         report['aggregates']['context_pipeline']['stress_drop']=summary([e['diagnostics']['stress']['drop_f1'] for e in context['experiments']])
@@ -36,11 +38,17 @@ def export(workspace,output):
         assert digest(run/'model.safetensors')==entry['checkpoint_sha256']
         meta=read_json(run/'run.json')
         assert meta['status']=='completed' and meta['config']==entry['config']
-        assert meta['epochs_completed']==6 and meta['optimizer_steps']>0
+        config=meta['config']
+        expected_updates=math.ceil(math.ceil(len(rows['train'])/config['batch_size'])/config['accumulation'])*config['epochs']
+        assert meta['epochs_completed']==6 and meta['optimizer_steps']==expected_updates and meta['amp_skipped_updates']==0
+        assert 1<=meta['best_epoch']<=6
+        if entry['name']=='context_pipeline':assert meta['relation_features']=='context_position'
         assert entry['test']['documents']==4000 and entry['validation']['documents']==2000
         assert len(entry['test']['per_relation'])==55
         counts=entry['test']['counts_per_document'];totals={k:sum(x[k] for x in counts) for k in ('correct','predicted','gold')}
         assert abs(2*totals['correct']/(totals['predicted']+totals['gold'])-entry['test']['relation']['f1'])<1e-12
+        assert totals['gold']==manifest['counts']['test']['triples']
+        assert entry['test']['entity']['gold']==manifest['counts']['test']['entities']
     output.mkdir(parents=True,exist_ok=True)
     save_json(output/'baseline_report.json',baseline_report)
     if context:
@@ -92,7 +100,7 @@ def export(workspace,output):
             '中性前缀压力使用同组 1,000 条测试文本、固定 seed2027，在原文前加“信息：”并平移所有跨度。它只说明前缀敏感性，不能代替真实业务外部测试。', '',
             f"默认 run：`{report['selected_run']}`。seed42 模型 {representative['parameters']:,} 参数，完整训练含验证和保存 {representative['seconds']:.1f} 秒，PyTorch 峰值分配显存 {representative['peak_cuda_memory_mb']:.1f} MiB。编码器版本 `{representative['model_revision']}`。",'',
             '## 可以写入简历的表述','',
-            f"> 实现中文实体与关系联合抽取系统，基于 DuIE2 清洗构建 10k/2k/4k 固定划分，微调中文预训练编码器，比较实体关系流水线、上下文位置增强与带类型跨度 GPLinker，完成两种子评测、实体误差级联诊断及解码/冻结消融；在当前二元槽位子集取得关系 Micro-F1 {100*aggregate['relation_f1']['mean']:.2f}%，提供原文定位和结构化 JSON 推理。",'',
+            f"> 实现中文实体与关系抽取系统，基于 DuIE2 清洗构建 10k/2k/4k 固定划分，微调中文预训练编码器，比较实体关系流水线、上下文位置增强与带类型跨度 GPLinker，完成两种子评测、实体误差级联诊断及解码/冻结消融；在当前二元槽位子集取得关系 Micro-F1 {100*aggregate['relation_f1']['mean']:.2f}%，提供原文定位和结构化 JSON 推理。",'',
             '上述成绩不能写成官方 DuIE 榜单、完整 NER 指标、原创算法或生产上线效果。模型仅支持有限 schema，长文本窗口不保证跨窗口关系；分数未校准。', '',
             '## 可核验证据','',
             '- [冻结协议](ie-results/protocol.json)：数据与代码指纹、全部配方、阈值/选模/测试政策。',
@@ -100,7 +108,14 @@ def export(workspace,output):
             '- [快照指纹](ie-results/fingerprints.json)。原始模型、逐轮历史和文本错误位于本地 workspace/ie/runs，不随 Git 分发。','']
     (output.parent/'IE_RESULTS.md').write_text('\n'.join(lines),encoding='utf-8',newline='\n')
     from scripts.analyze_ie import analyze
-    analyze(workspace,output)
+    analysis=analyze(workspace,output)
+    if context:
+        before=analysis['error_categories']['pipeline']['counts'];after=analysis['error_categories']['context_pipeline']['counts']
+        caveat=['','## 增强方案未解决的问题','',
+                f"固定 seed42、排除早期12条后的3,988条中，金标实体对上多报错误角色由 {before.get('extra_wrong_role_on_gold_typed_pair',0)} 增至 {after.get('extra_wrong_role_on_gold_typed_pair',0)}；双方实体已检出但关系遗漏由 {before.get('missing_despite_both_typed_surfaces_detected',0)} 变为 {after.get('missing_despite_both_typed_surfaces_detected',0)}。F1提升不能说明角色混淆已解决，新增上下文与位置也未分别做独立训练的因子消融。",'',
+                '真实 HTTP 手写样例中，“《霸王别姬》的导演是陈凯歌，主演为张国荣和巩俐”仍多报陈凯歌为主演，并遗漏巩俐。出生日期、出生地和出版社不在当前DuIE2 schema中，相关样例未输出这些关系是能力范围限制，不能算成已支持槽位的漏检；实体标签也只覆盖关系参与者。作者关系及emoji定位核验通过；这些样例是功能检查，不是独立质量基准。完整结果见 [服务核验](ie-results/service_check.json)。','',
+                '该项目目前适合作为可复验的 NLP 工程与实验项目。下一步应先补充独立实体监督、复杂/长尾槽位数据和业务外部集，再用验证集研究语义角色困难负例与损失配置；本轮未继续按测试错误调参。','']
+        with (output.parent/'IE_RESULTS.md').open('a',encoding='utf-8',newline='\n') as f:f.write('\n'.join(caveat))
     save_json(output/'fingerprints.json',{p.name:digest(p) for p in output.glob('*.json') if p.name!='fingerprints.json'})
     print(output.parent/'IE_RESULTS.md')
 

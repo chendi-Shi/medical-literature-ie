@@ -4,7 +4,10 @@ from threading import RLock
 import os
 import subprocess
 import sys
+import time
+import uuid
 from fastapi import APIRouter,HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel,Field
 from .data import read_json,save_json
 from .cli import safe_child
@@ -41,7 +44,7 @@ def group_relations(result):
     return list(groups.values())
 
 def router(workspace:Path):
-    routes=APIRouter(prefix='/api/ie');root=workspace/'ie';cache=OrderedDict();mutex=RLock()
+    routes=APIRouter(prefix='/api/ie');root=workspace/'ie';cache=OrderedDict();mutex=RLock();exports=OrderedDict()
     research=root/'research'/DATASET
     def checked(run_id):
         try:run=safe_child(root/'runs',run_id)
@@ -147,10 +150,22 @@ def router(workspace:Path):
                     while len(cache)>2:cache.popitem(last=False)
                 cache.move_to_end(run_id)
                 result=cache[run_id][0].extract(body.text)
-                return {**result,'relation_groups':group_relations(result),
+                document={**result,'relation_groups':group_relations(result),
                         'relation_grouping':'exact typed surface + predicate/slot; mention links preserved, no alias or coreference resolution',
                         'run_id':run_id,'model_architecture':'context_pipeline' if read_json(run/'run.json').get('relation_features')=='context_position' else read_json(run/'run.json')['config']['architecture']}
+                export_id=uuid.uuid4().hex
+                exports[export_id]=(time.monotonic(),document)
+                while len(exports)>10:exports.popitem(last=False)
+                return {**document,'export_url':'/api/ie/exports/'+export_id}
         except ValueError as e:raise HTTPException(400,str(e)) from e
+    @routes.get('/exports/{export_id}')
+    def export_result(export_id:str):
+        if len(export_id)!=32 or any(c not in '0123456789abcdef' for c in export_id):raise HTTPException(400,'导出编号无效')
+        with mutex:
+            value=exports.get(export_id)
+            if not value or time.monotonic()-value[0]>900:
+                exports.pop(export_id,None);raise HTTPException(404,'结果导出已过期，请重新抽取')
+            return JSONResponse(value[1],headers={'Content-Disposition':'attachment; filename="information-extraction.json"','Cache-Control':'no-store'})
     @routes.post('/train',status_code=202)
     def train(body:IETrainRequest):
         if (root/'.suite.lock').exists() or (root/'.context.lock').exists() or (workspace/'.training.lock').exists():

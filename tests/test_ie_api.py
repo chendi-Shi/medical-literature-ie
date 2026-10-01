@@ -44,6 +44,12 @@ def test_ie_inference_preserves_neural_json_and_reuses_cpu_model(tmp_path,monkey
         result=client.post('/api/ie/extract',json={'text':'😀甲','run_id':'model-a'}).json()
         assert result['text']=='😀甲' and result['entities'][0]['start']==1 and result['run_id']=='model-a'
     assert calls==[('model-a','cpu')]
+    downloaded=client.get(result['export_url'])
+    assert downloaded.status_code==200 and downloaded.headers['content-disposition'].startswith('attachment;')
+    assert downloaded.json()['text']=='😀甲' and downloaded.json()['entities'][0]['start']==1
+    assert downloaded.json()['run_id']=='model-a' and downloaded.json()['relations']==[]
+    assert client.get('/api/ie/exports/not-a-valid-id').status_code==400
+    assert client.get('/api/ie/exports/'+'0'*32).status_code==404
     save_json(tmp_path/'ie/runs/model-a/thresholds.json',{'entity':.5,'relation':.5})
     assert client.post('/api/ie/extract',json={'text':'😀甲','run_id':'model-a'}).status_code==200
     assert calls==[('model-a','cpu'),('model-a','cpu')]

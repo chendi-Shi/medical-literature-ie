@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "created_at": "2026-10-01T02:49:50.782056+00:00",
+  "dataset": "duie2-slots-10k-v1",
+  "dataset_sha256": "4115ed6b44477734b710da662ccbbc68f150b43ab08a7ad3cf2d6729321cb1f2",
+  "split_sha256": {
+    "train": "1b95324642e7ad274447d8c1bcf2141ae793438dc434d81dbc53d11245d915d8",
+    "validation": "c7c56416d81646deccfcde7cb35ddf19c735230676d2f276ad8a66c18d014bab",
+    "test": "23f9650c7f0d5defaa7482600e0ed58cf243d1c4a192e646794a0d67e45f6fa0"
+  },
+  "source_sha256": {
+    "frozen_core/__init__.py": "cbc10f15b827d007890e87c7b3621fe976e71db65cd7577de84285c8488d86d2",
+    "frozen_core/cli.py": "3d1b7eb3a76649068a9fda66c96039c68f9885c9da2ce6fd4d5d347abc9709e0",
+    "frozen_core/data.py": "eaa855de5a3c86715097cd35da3f485f5ce672ea4b3b80d9c4d628f5f5110f4e",
+    "frozen_core/encoding.py": "5007647a11695b90704874113c133ec813a019e219d583b17202d831d0dbcba3",
+    "frozen_core/metrics.py": "e816b2ca990956f0011626737cb2c6069f5457a31e2b5f586ab83906a279eaf8",
+    "frozen_core/model.py": "8e61b0e0f34705aa4d43675c4703bc37433334f2f56a6dddfb887c0e0bb007f3",
+    "frozen_core/predict.py": "4a50a5c28e6a56b6c48cebc8ad9e31c8a75325e0464d96fe82ef7df6d9585298",
+    "frozen_core/suite.py": "9a952575d8d9cbe9860e99b85e0d8e7b5efce7a35162c4b9ca3eb1add8b7bd82",
+    "frozen_core/train.py": "297b84c4fe96bc6d9e058f21180c302441be9a3abcb1c16aabd9fcee77ef0cdd",
+    "nlp_lab/ie_context.py": "72d0a331c3cc0b371a00687f04359c4503144eba815db21daf63db917fa49d69",
+    "scripts/run_ie_context.py": "316c47f8091539776112ea7ec2e00b3cf9e60e78695cc7e9bff7c14d7d8af492"
+  },
+  "features": {
+    "window": 4,
+    "distance_edges": [
+      -64,
+      -32,
+      -16,
+      -8,
+      -4,
+      -2,
+      -1,
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "distance_dimensions": 16,
+    "features": [
+      "subject",
+      "object",
+      "between",
+      "subject_left",
+      "subject_right",
+      "object_left",
+      "object_right",
+      "cls"
+    ],
+    "mask": "local means exclude special and padding tokens",
+    "pair_hidden": 256
+  },
+  "recipes": [
+    {
+      "model": "BAAI/bge-small-zh-v1.5",
+      "architecture": "pipeline",
+      "seed": 42,
+      "epochs": 6,
+      "batch_size": 8,
+      "accumulation": 4,
+      "learning_rate": 3e-05,
+      "max_length": 160,
+      "freeze_encoder": false,
+      "use_tail": true,
+      "warmup_ratio": 0.06,
+      "mixed_precision": "fp16"
+    },
+    {
+      "model": "BAAI/bge-small-zh-v1.5",
+      "architecture": "pipeline",
+      "seed": 43,
+      "epochs": 6,
+      "batch_size": 8,
+      "accumulation": 4,
+      "learning_rate": 3e-05,
+      "max_length": 160,
+      "freeze_encoder": false,
+      "use_tail": true,
+      "warmup_ratio": 0.06,
+      "mixed_precision": "fp16"
+    }
+  ],
+  "threshold_grid": [
+    0.0,
+    -0.5,
+    0.5
+  ],
+  "selection": "zero-logit validation best epoch; common entity/relation threshold selected on validation; method by two-seed mean tuned validation; representative seed42",
+  "test_policy": "both extension fits and validation tuning finish before extension test evaluation; extension designed using authored inference examples and training/validation only",
+  "factory": "process-local frozen train.Extractor replacement with ContextExtractor; same optimizer, loss, negatives, encoder and budget",
+  "stress": {
+    "prefix": "信息：",
+    "sample_count": 1000,
+    "seed": 2027
+  },
+  "smoke_disclosure": "first12 test rows previously used for metric plumbing, separately report remaining3988",
+  "baseline_phase_when_frozen": "validation_tuning"
+}

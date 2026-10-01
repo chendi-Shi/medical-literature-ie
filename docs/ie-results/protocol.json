@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "created_at": "2026-10-01T01:50:11.726507+00:00",
+  "dataset": "duie2-slots-10k-v1",
+  "dataset_sha256": "4115ed6b44477734b710da662ccbbc68f150b43ab08a7ad3cf2d6729321cb1f2",
+  "split_sha256": {
+    "train": "1b95324642e7ad274447d8c1bcf2141ae793438dc434d81dbc53d11245d915d8",
+    "validation": "c7c56416d81646deccfcde7cb35ddf19c735230676d2f276ad8a66c18d014bab",
+    "test": "23f9650c7f0d5defaa7482600e0ed58cf243d1c4a192e646794a0d67e45f6fa0"
+  },
+  "recipes": [
+    {
+      "name": "pipeline",
+      "config": {
+        "model": "BAAI/bge-small-zh-v1.5",
+        "architecture": "pipeline",
+        "seed": 42,
+        "epochs": 6,
+        "batch_size": 8,
+        "accumulation": 4,
+        "learning_rate": 3e-05,
+        "max_length": 160,
+        "freeze_encoder": false,
+        "use_tail": true,
+        "warmup_ratio": 0.06,
+        "mixed_precision": "fp16"
+      }
+    },
+    {
+      "name": "pipeline",
+      "config": {
+        "model": "BAAI/bge-small-zh-v1.5",
+        "architecture": "pipeline",
+        "seed": 43,
+        "epochs": 6,
+        "batch_size": 8,
+        "accumulation": 4,
+        "learning_rate": 3e-05,
+        "max_length": 160,
+        "freeze_encoder": false,
+        "use_tail": true,
+        "warmup_ratio": 0.06,
+        "mixed_precision": "fp16"
+      }
+    },
+    {
+      "name": "joint",
+      "config": {
+        "model": "BAAI/bge-small-zh-v1.5",
+        "architecture": "joint",
+        "seed": 42,
+        "epochs": 6,
+        "batch_size": 8,
+        "accumulation": 4,
+        "learning_rate": 3e-05,
+        "max_length": 160,
+        "freeze_encoder": false,
+        "use_tail": true,
+        "warmup_ratio": 0.06,
+        "mixed_precision": "fp16"
+      }
+    },
+    {
+      "name": "joint",
+      "config": {
+        "model": "BAAI/bge-small-zh-v1.5",
+        "architecture": "joint",
+        "seed": 43,
+        "epochs": 6,
+        "batch_size": 8,
+        "accumulation": 4,
+        "learning_rate": 3e-05,
+        "max_length": 160,
+        "freeze_encoder": false,
+        "use_tail": true,
+        "warmup_ratio": 0.06,
+        "mixed_precision": "fp16"
+      }
+    },
+    {
+      "name": "frozen_encoder",
+      "config": {
+        "model": "BAAI/bge-small-zh-v1.5",
+        "architecture": "joint",
+        "seed": 42,
+        "epochs": 6,
+        "batch_size": 8,
+        "accumulation": 4,
+        "learning_rate": 3e-05,
+        "max_length": 160,
+        "freeze_encoder": true,
+        "use_tail": true,
+        "warmup_ratio": 0.06,
+        "mixed_precision": "fp16"
+      }
+    }
+  ],
+  "source_sha256": {
+    "__init__.py": "cbc10f15b827d007890e87c7b3621fe976e71db65cd7577de84285c8488d86d2",
+    "cli.py": "3d1b7eb3a76649068a9fda66c96039c68f9885c9da2ce6fd4d5d347abc9709e0",
+    "data.py": "eaa855de5a3c86715097cd35da3f485f5ce672ea4b3b80d9c4d628f5f5110f4e",
+    "encoding.py": "5007647a11695b90704874113c133ec813a019e219d583b17202d831d0dbcba3",
+    "metrics.py": "e816b2ca990956f0011626737cb2c6069f5457a31e2b5f586ab83906a279eaf8",
+    "model.py": "8e61b0e0f34705aa4d43675c4703bc37433334f2f56a6dddfb887c0e0bb007f3",
+    "predict.py": "4a50a5c28e6a56b6c48cebc8ad9e31c8a75325e0464d96fe82ef7df6d9585298",
+    "suite.py": "9a952575d8d9cbe9860e99b85e0d8e7b5efce7a35162c4b9ca3eb1add8b7bd82",
+    "train.py": "297b84c4fe96bc6d9e058f21180c302441be9a3abcb1c16aabd9fcee77ef0cdd"
+  },
+  "selection": "epoch selected by validation relation F1 at zero logits; architecture by mean tuned validation F1",
+  "threshold_grid": [
+    0.0,
+    -0.5,
+    0.5
+  ],
+  "threshold_policy": "same entity/relation logit threshold; validation only, prefer zero on ties",
+  "test_policy": "all fits and validation tuning finish before first heldout test evaluation",
+  "stress": {
+    "name": "neutral_prefix",
+    "prefix": "信息：",
+    "sample_count": 1000,
+    "seed": 2027
+  },
+  "ablations": [
+    "frozen encoder, separately trained seed42",
+    "remove tail intersection, same joint seed42 weights"
+  ],
+  "diagnostic": "pipeline seed42 with gold participant entities; not deployment performance",
+  "interval": "600 paired text bootstrap replicates, seed31415, fixed seed42 models",
+  "limitations": [
+    "官方 test 无公开标签；本轮 validation/test 来自清洗后的官方 dev 的固定不重叠子集",
+    "仅保留原文完整对齐且不超过 128 tokens 的记录，不能称为全量 DuIE 基准",
+    "复杂 object 拆为 predicate/slot 二元关系；不等于官方完整多槽 SPO 指标",
+    "实体位置由原文首次精确匹配推导，重复提及的位置可能与实际语义提及不同",
+    "实体标注只覆盖关系参与者，不是独立完整 NER 语料；不做别名宽松匹配",
+    "精确去重不排除语义近重复或预训练语料重叠"
+  ]
+}

@@ -1,0 +1,997 @@
+{
+  "dataset_sha256": "4115ed6b44477734b710da662ccbbc68f150b43ab08a7ad3cf2d6729321cb1f2",
+  "source_sha256": "830d75fee3e917c89d4e322f48896edcfefe3aa51fb724cab525eca2d92443ca",
+  "scope": "主协议外的描述性分组；两种子固定模型均值，不做额外调参或显著性推断",
+  "flow_smoke_disclosure": "正式套件前，前12条测试文本曾用于96训练/24验证的单轮流程自测和重载核验；未用于正式选模、阈值或质量超参选择。另报告排除这12条后的3988条关系指标。",
+  "ambiguous_offset_documents": {
+    "train": 2020,
+    "validation": 420,
+    "test": 845
+  },
+  "groups": {
+    "one_gold_slot": 2385,
+    "multiple_gold_slots": 1615,
+    "distinct_overlapping_spans": 109,
+    "non_overlapping_spans": 3891,
+    "all_typed_surfaces_seen_in_train": 470,
+    "some_typed_surface_unseen": 3530,
+    "exclude_12_early_flow_smoke_rows": 3988
+  },
+  "frequency_bands": {
+    "train_support_1_49": [
+      3,
+      8,
+      9,
+      13,
+      22,
+      26,
+      28,
+      36,
+      40,
+      48,
+      54
+    ],
+    "train_support_50_199": [
+      2,
+      6,
+      7,
+      15,
+      16,
+      17,
+      18,
+      24,
+      30,
+      34,
+      35,
+      38,
+      39,
+      43,
+      44,
+      45,
+      46,
+      49,
+      50,
+      51
+    ],
+    "train_support_200_plus": [
+      0,
+      1,
+      4,
+      5,
+      10,
+      11,
+      12,
+      14,
+      19,
+      20,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31,
+      32,
+      33,
+      37,
+      41,
+      42,
+      47,
+      52,
+      53
+    ]
+  },
+  "results": {
+    "pipeline": {
+      "one_gold_slot": {
+        "documents": 2385,
+        "seed_metrics": [
+          {
+            "precision": 0.5031658927817645,
+            "recall": 0.49979035639413,
+            "f1": 0.5014724442574674,
+            "correct": 1192,
+            "predicted": 2369,
+            "gold": 2385
+          },
+          {
+            "precision": 0.5320219579139982,
+            "recall": 0.48763102725366875,
+            "f1": 0.5088602056442791,
+            "correct": 1163,
+            "predicted": 2186,
+            "gold": 2385
+          }
+        ],
+        "mean_relation_f1": 0.5051663249508733
+      },
+      "multiple_gold_slots": {
+        "documents": 1615,
+        "seed_metrics": [
+          {
+            "precision": 0.4338348765432099,
+            "recall": 0.44376479873717445,
+            "f1": 0.43874365977370267,
+            "correct": 2249,
+            "predicted": 5184,
+            "gold": 5068
+          },
+          {
+            "precision": 0.47257850508624505,
+            "recall": 0.4216653512233623,
+            "f1": 0.4456725755995829,
+            "correct": 2137,
+            "predicted": 4522,
+            "gold": 5068
+          }
+        ],
+        "mean_relation_f1": 0.4422081176866428
+      },
+      "distinct_overlapping_spans": {
+        "documents": 109,
+        "seed_metrics": [
+          {
+            "precision": 0.4398148148148148,
+            "recall": 0.31986531986531985,
+            "f1": 0.37037037037037035,
+            "correct": 95,
+            "predicted": 216,
+            "gold": 297
+          },
+          {
+            "precision": 0.4861878453038674,
+            "recall": 0.2962962962962963,
+            "f1": 0.3682008368200837,
+            "correct": 88,
+            "predicted": 181,
+            "gold": 297
+          }
+        ],
+        "mean_relation_f1": 0.369285603595227
+      },
+      "non_overlapping_spans": {
+        "documents": 3891,
+        "seed_metrics": [
+          {
+            "precision": 0.45604470492026716,
+            "recall": 0.46757965343767466,
+            "f1": 0.46174015041744293,
+            "correct": 3346,
+            "predicted": 7337,
+            "gold": 7156
+          },
+          {
+            "precision": 0.49210969817680406,
+            "recall": 0.4488541084404695,
+            "f1": 0.4694876854490974,
+            "correct": 3212,
+            "predicted": 6527,
+            "gold": 7156
+          }
+        ],
+        "mean_relation_f1": 0.46561391793327017
+      },
+      "all_typed_surfaces_seen_in_train": {
+        "documents": 470,
+        "seed_metrics": [
+          {
+            "precision": 0.4028268551236749,
+            "recall": 0.4424320827943079,
+            "f1": 0.4217016029593095,
+            "correct": 342,
+            "predicted": 849,
+            "gold": 773
+          },
+          {
+            "precision": 0.4632768361581921,
+            "recall": 0.4243208279430789,
+            "f1": 0.44294395678595544,
+            "correct": 328,
+            "predicted": 708,
+            "gold": 773
+          }
+        ],
+        "mean_relation_f1": 0.43232277987263246
+      },
+      "some_typed_surface_unseen": {
+        "documents": 3530,
+        "seed_metrics": [
+          {
+            "precision": 0.4622613365155131,
+            "recall": 0.4639221556886228,
+            "f1": 0.4630902570233114,
+            "correct": 3099,
+            "predicted": 6704,
+            "gold": 6680
+          },
+          {
+            "precision": 0.49533333333333335,
+            "recall": 0.44491017964071855,
+            "f1": 0.46876971608832807,
+            "correct": 2972,
+            "predicted": 6000,
+            "gold": 6680
+          }
+        ],
+        "mean_relation_f1": 0.46592998655581974
+      },
+      "exclude_12_early_flow_smoke_rows": {
+        "documents": 3988,
+        "seed_metrics": [
+          {
+            "precision": 0.45611702127659576,
+            "recall": 0.46176628971459344,
+            "f1": 0.45892427080545894,
+            "correct": 3430,
+            "predicted": 7520,
+            "gold": 7428
+          },
+          {
+            "precision": 0.4925864909390445,
+            "recall": 0.4427840603123317,
+            "f1": 0.4663594470046083,
+            "correct": 3289,
+            "predicted": 6677,
+            "gold": 7428
+          }
+        ],
+        "mean_relation_f1": 0.4626418589050336
+      },
+      "train_support_1_49": {
+        "slots": 11,
+        "seed_metrics": [
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 0,
+            "gold": 78
+          },
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 2,
+            "gold": 78
+          }
+        ],
+        "mean_relation_f1": 0.0
+      },
+      "train_support_50_199": {
+        "slots": 20,
+        "seed_metrics": [
+          {
+            "precision": 0.39299610894941633,
+            "recall": 0.1281725888324873,
+            "f1": 0.19330143540669856,
+            "correct": 101,
+            "predicted": 257,
+            "gold": 788
+          },
+          {
+            "precision": 0.48128342245989303,
+            "recall": 0.11421319796954314,
+            "f1": 0.18461538461538463,
+            "correct": 90,
+            "predicted": 187,
+            "gold": 788
+          }
+        ],
+        "mean_relation_f1": 0.18895841001104158
+      },
+      "train_support_200_plus": {
+        "slots": 24,
+        "seed_metrics": [
+          {
+            "precision": 0.45778508771929827,
+            "recall": 0.5070593593441628,
+            "f1": 0.4811640135417417,
+            "correct": 3340,
+            "predicted": 7296,
+            "gold": 6587
+          },
+          {
+            "precision": 0.49240681086056143,
+            "recall": 0.48732351601639595,
+            "f1": 0.4898519761941096,
+            "correct": 3210,
+            "predicted": 6519,
+            "gold": 6587
+          }
+        ],
+        "mean_relation_f1": 0.4855079948679256
+      }
+    },
+    "joint": {
+      "one_gold_slot": {
+        "documents": 2385,
+        "seed_metrics": [
+          {
+            "precision": 0.6233153638814016,
+            "recall": 0.38784067085953877,
+            "f1": 0.47815973119669164,
+            "correct": 925,
+            "predicted": 1484,
+            "gold": 2385
+          },
+          {
+            "precision": 0.6744548286604362,
+            "recall": 0.3631027253668763,
+            "f1": 0.4720632324884165,
+            "correct": 866,
+            "predicted": 1284,
+            "gold": 2385
+          }
+        ],
+        "mean_relation_f1": 0.47511148184255403
+      },
+      "multiple_gold_slots": {
+        "documents": 1615,
+        "seed_metrics": [
+          {
+            "precision": 0.5296327212020033,
+            "recall": 0.2503946329913181,
+            "f1": 0.340032154340836,
+            "correct": 1269,
+            "predicted": 2396,
+            "gold": 5068
+          },
+          {
+            "precision": 0.5689066059225513,
+            "recall": 0.19711917916337807,
+            "f1": 0.29279015240328254,
+            "correct": 999,
+            "predicted": 1756,
+            "gold": 5068
+          }
+        ],
+        "mean_relation_f1": 0.3164111533720593
+      },
+      "distinct_overlapping_spans": {
+        "documents": 109,
+        "seed_metrics": [
+          {
+            "precision": 0.514018691588785,
+            "recall": 0.18518518518518517,
+            "f1": 0.2722772277227723,
+            "correct": 55,
+            "predicted": 107,
+            "gold": 297
+          },
+          {
+            "precision": 0.5974025974025974,
+            "recall": 0.15488215488215487,
+            "f1": 0.24598930481283424,
+            "correct": 46,
+            "predicted": 77,
+            "gold": 297
+          }
+        ],
+        "mean_relation_f1": 0.25913326626780325
+      },
+      "non_overlapping_spans": {
+        "documents": 3891,
+        "seed_metrics": [
+          {
+            "precision": 0.5669228730453221,
+            "recall": 0.2989100055897149,
+            "f1": 0.3914356299752951,
+            "correct": 2139,
+            "predicted": 3773,
+            "gold": 7156
+          },
+          {
+            "precision": 0.6139048261896727,
+            "recall": 0.2541922861934041,
+            "f1": 0.35952169186678523,
+            "correct": 1819,
+            "predicted": 2963,
+            "gold": 7156
+          }
+        ],
+        "mean_relation_f1": 0.37547866092104015
+      },
+      "all_typed_surfaces_seen_in_train": {
+        "documents": 470,
+        "seed_metrics": [
+          {
+            "precision": 0.5277777777777778,
+            "recall": 0.17205692108667528,
+            "f1": 0.25951219512195123,
+            "correct": 133,
+            "predicted": 252,
+            "gold": 773
+          },
+          {
+            "precision": 0.5797872340425532,
+            "recall": 0.1410090556274256,
+            "f1": 0.22684703433922998,
+            "correct": 109,
+            "predicted": 188,
+            "gold": 773
+          }
+        ],
+        "mean_relation_f1": 0.2431796147305906
+      },
+      "some_typed_surface_unseen": {
+        "documents": 3530,
+        "seed_metrics": [
+          {
+            "precision": 0.5680815876515987,
+            "recall": 0.30853293413173655,
+            "f1": 0.39988358556461,
+            "correct": 2061,
+            "predicted": 3628,
+            "gold": 6680
+          },
+          {
+            "precision": 0.6157082748948106,
+            "recall": 0.262874251497006,
+            "f1": 0.36844313890054553,
+            "correct": 1756,
+            "predicted": 2852,
+            "gold": 6680
+          }
+        ],
+        "mean_relation_f1": 0.38416336223257774
+      },
+      "exclude_12_early_flow_smoke_rows": {
+        "documents": 3988,
+        "seed_metrics": [
+          {
+            "precision": 0.5660279647850854,
+            "recall": 0.29429186860527734,
+            "f1": 0.38724534986713904,
+            "correct": 2186,
+            "predicted": 3862,
+            "gold": 7428
+          },
+          {
+            "precision": 0.6141394119590353,
+            "recall": 0.25026925148088314,
+            "f1": 0.3556193208990913,
+            "correct": 1859,
+            "predicted": 3027,
+            "gold": 7428
+          }
+        ],
+        "mean_relation_f1": 0.37143233538311515
+      },
+      "train_support_1_49": {
+        "slots": 11,
+        "seed_metrics": [
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 0,
+            "gold": 78
+          },
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 0,
+            "gold": 78
+          }
+        ],
+        "mean_relation_f1": 0.0
+      },
+      "train_support_50_199": {
+        "slots": 20,
+        "seed_metrics": [
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 0,
+            "gold": 788
+          },
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 0,
+            "gold": 788
+          }
+        ],
+        "mean_relation_f1": 0.0
+      },
+      "train_support_200_plus": {
+        "slots": 24,
+        "seed_metrics": [
+          {
+            "precision": 0.5654639175257732,
+            "recall": 0.33308030970092606,
+            "f1": 0.4192223177605809,
+            "correct": 2194,
+            "predicted": 3880,
+            "gold": 6587
+          },
+          {
+            "precision": 0.6134868421052632,
+            "recall": 0.2831334446637316,
+            "f1": 0.38745195803469407,
+            "correct": 1865,
+            "predicted": 3040,
+            "gold": 6587
+          }
+        ],
+        "mean_relation_f1": 0.4033371378976375
+      }
+    },
+    "context_pipeline": {
+      "one_gold_slot": {
+        "documents": 2385,
+        "seed_metrics": [
+          {
+            "precision": 0.4976322020520916,
+            "recall": 0.5287211740041928,
+            "f1": 0.5127058345192113,
+            "correct": 1261,
+            "predicted": 2534,
+            "gold": 2385
+          },
+          {
+            "precision": 0.5158562367864693,
+            "recall": 0.5115303983228512,
+            "f1": 0.5136842105263157,
+            "correct": 1220,
+            "predicted": 2365,
+            "gold": 2385
+          }
+        ],
+        "mean_relation_f1": 0.5131950225227635
+      },
+      "multiple_gold_slots": {
+        "documents": 1615,
+        "seed_metrics": [
+          {
+            "precision": 0.44235680408609995,
+            "recall": 0.47849250197316495,
+            "f1": 0.4597156398104265,
+            "correct": 2425,
+            "predicted": 5482,
+            "gold": 5068
+          },
+          {
+            "precision": 0.44069055132726936,
+            "recall": 0.46842936069455404,
+            "f1": 0.4541367766618843,
+            "correct": 2374,
+            "predicted": 5387,
+            "gold": 5068
+          }
+        ],
+        "mean_relation_f1": 0.4569262082361554
+      },
+      "distinct_overlapping_spans": {
+        "documents": 109,
+        "seed_metrics": [
+          {
+            "precision": 0.45893719806763283,
+            "recall": 0.31986531986531985,
+            "f1": 0.376984126984127,
+            "correct": 95,
+            "predicted": 207,
+            "gold": 297
+          },
+          {
+            "precision": 0.4919786096256685,
+            "recall": 0.30976430976430974,
+            "f1": 0.38016528925619836,
+            "correct": 92,
+            "predicted": 187,
+            "gold": 297
+          }
+        ],
+        "mean_relation_f1": 0.3785747081201627
+      },
+      "non_overlapping_spans": {
+        "documents": 3891,
+        "seed_metrics": [
+          {
+            "precision": 0.45985401459854014,
+            "recall": 0.5018166573504751,
+            "f1": 0.4799198128967591,
+            "correct": 3591,
+            "predicted": 7809,
+            "gold": 7156
+          },
+          {
+            "precision": 0.46292134831460674,
+            "recall": 0.4893795416433762,
+            "f1": 0.4757828951837511,
+            "correct": 3502,
+            "predicted": 7565,
+            "gold": 7156
+          }
+        ],
+        "mean_relation_f1": 0.47785135404025514
+      },
+      "all_typed_surfaces_seen_in_train": {
+        "documents": 470,
+        "seed_metrics": [
+          {
+            "precision": 0.43576017130620986,
+            "recall": 0.5265200517464425,
+            "f1": 0.47685998828353837,
+            "correct": 407,
+            "predicted": 934,
+            "gold": 773
+          },
+          {
+            "precision": 0.43982494529540483,
+            "recall": 0.5200517464424321,
+            "f1": 0.47658565500889155,
+            "correct": 402,
+            "predicted": 914,
+            "gold": 773
+          }
+        ],
+        "mean_relation_f1": 0.47672282164621493
+      },
+      "some_typed_surface_unseen": {
+        "documents": 3530,
+        "seed_metrics": [
+          {
+            "precision": 0.4630048009036995,
+            "recall": 0.4908682634730539,
+            "f1": 0.476529574189798,
+            "correct": 3279,
+            "predicted": 7082,
+            "gold": 6680
+          },
+          {
+            "precision": 0.4668031588183679,
+            "recall": 0.47784431137724553,
+            "f1": 0.47225920994229914,
+            "correct": 3192,
+            "predicted": 6838,
+            "gold": 6680
+          }
+        ],
+        "mean_relation_f1": 0.4743943920660486
+      },
+      "exclude_12_early_flow_smoke_rows": {
+        "documents": 3988,
+        "seed_metrics": [
+          {
+            "precision": 0.46000751032669923,
+            "recall": 0.4947495961227787,
+            "f1": 0.476746448725433,
+            "correct": 3675,
+            "predicted": 7989,
+            "gold": 7428
+          },
+          {
+            "precision": 0.46363871635610765,
+            "recall": 0.482364028002154,
+            "f1": 0.4728160464502507,
+            "correct": 3583,
+            "predicted": 7728,
+            "gold": 7428
+          }
+        ],
+        "mean_relation_f1": 0.47478124758784185
+      },
+      "train_support_1_49": {
+        "slots": 11,
+        "seed_metrics": [
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 0,
+            "gold": 78
+          },
+          {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "correct": 0,
+            "predicted": 2,
+            "gold": 78
+          }
+        ],
+        "mean_relation_f1": 0.0
+      },
+      "train_support_50_199": {
+        "slots": 20,
+        "seed_metrics": [
+          {
+            "precision": 0.4861111111111111,
+            "recall": 0.13324873096446702,
+            "f1": 0.20916334661354583,
+            "correct": 105,
+            "predicted": 216,
+            "gold": 788
+          },
+          {
+            "precision": 0.5067264573991032,
+            "recall": 0.1434010152284264,
+            "f1": 0.22354104846686448,
+            "correct": 113,
+            "predicted": 223,
+            "gold": 788
+          }
+        ],
+        "mean_relation_f1": 0.21635219754020515
+      },
+      "train_support_200_plus": {
+        "slots": 24,
+        "seed_metrics": [
+          {
+            "precision": 0.4591025641025641,
+            "recall": 0.5436465765902535,
+            "f1": 0.49781052338917076,
+            "correct": 3581,
+            "predicted": 7800,
+            "gold": 6587
+          },
+          {
+            "precision": 0.4624684469244055,
+            "recall": 0.5284651586458176,
+            "f1": 0.4932690945160833,
+            "correct": 3481,
+            "predicted": 7527,
+            "gold": 6587
+          }
+        ],
+        "mean_relation_f1": 0.49553980895262706
+      }
+    }
+  },
+  "error_categories": {
+    "pipeline": {
+      "documents": 3988,
+      "counts": {
+        "missing_with_participant_surface_or_type_absent": 3552,
+        "missing_despite_both_typed_surfaces_detected": 446,
+        "missing_with_wrong_role_on_same_typed_pair": 101,
+        "extra_other_pair_or_type": 3512,
+        "extra_wrong_role_on_gold_typed_pair": 578
+      },
+      "role_confusions": [
+        {
+          "gold": "编剧",
+          "predicted": "主演",
+          "count": 17
+        },
+        {
+          "gold": "歌手",
+          "predicted": "作词",
+          "count": 14
+        },
+        {
+          "gold": "歌手",
+          "predicted": "作曲",
+          "count": 12
+        },
+        {
+          "gold": "主演",
+          "predicted": "导演",
+          "count": 11
+        },
+        {
+          "gold": "导演",
+          "predicted": "主演",
+          "count": 11
+        },
+        {
+          "gold": "丈夫",
+          "predicted": "妻子",
+          "count": 6
+        },
+        {
+          "gold": "主演",
+          "predicted": "编剧",
+          "count": 5
+        },
+        {
+          "gold": "妻子",
+          "predicted": "丈夫",
+          "count": 5
+        },
+        {
+          "gold": "主持人",
+          "predicted": "嘉宾",
+          "count": 4
+        },
+        {
+          "gold": "作曲",
+          "predicted": "歌手",
+          "count": 4
+        },
+        {
+          "gold": "作词",
+          "predicted": "歌手",
+          "count": 4
+        },
+        {
+          "gold": "制片人",
+          "predicted": "导演",
+          "count": 3
+        },
+        {
+          "gold": "编剧",
+          "predicted": "导演",
+          "count": 3
+        },
+        {
+          "gold": "母亲",
+          "predicted": "父亲",
+          "count": 3
+        },
+        {
+          "gold": "制片人",
+          "predicted": "编剧",
+          "count": 2
+        }
+      ],
+      "interpretation": "描述性错误分类；同表面字符串且同类型实体对。错角色与漏关系类别可重叠；不是人工因果归因。"
+    },
+    "joint": {
+      "documents": 3988,
+      "counts": {
+        "missing_despite_both_typed_surfaces_detected": 2795,
+        "missing_with_participant_surface_or_type_absent": 2447,
+        "extra_other_pair_or_type": 884,
+        "missing_with_wrong_role_on_same_typed_pair": 281,
+        "extra_wrong_role_on_gold_typed_pair": 792
+      },
+      "role_confusions": [
+        {
+          "gold": "作曲",
+          "predicted": "歌手",
+          "count": 83
+        },
+        {
+          "gold": "作词",
+          "predicted": "歌手",
+          "count": 79
+        },
+        {
+          "gold": "编剧",
+          "predicted": "主演",
+          "count": 54
+        },
+        {
+          "gold": "编剧",
+          "predicted": "导演",
+          "count": 32
+        },
+        {
+          "gold": "导演",
+          "predicted": "主演",
+          "count": 31
+        },
+        {
+          "gold": "制片人",
+          "predicted": "主演",
+          "count": 17
+        },
+        {
+          "gold": "作曲",
+          "predicted": "作词",
+          "count": 15
+        },
+        {
+          "gold": "制片人",
+          "predicted": "导演",
+          "count": 11
+        },
+        {
+          "gold": "主演",
+          "predicted": "导演",
+          "count": 5
+        },
+        {
+          "gold": "创始人",
+          "predicted": "董事长",
+          "count": 4
+        },
+        {
+          "gold": "作词",
+          "predicted": "作曲",
+          "count": 1
+        }
+      ],
+      "interpretation": "描述性错误分类；同表面字符串且同类型实体对。错角色与漏关系类别可重叠；不是人工因果归因。"
+    },
+    "context_pipeline": {
+      "documents": 3988,
+      "counts": {
+        "extra_other_pair_or_type": 3544,
+        "missing_with_participant_surface_or_type_absent": 3355,
+        "missing_despite_both_typed_surfaces_detected": 398,
+        "missing_with_wrong_role_on_same_typed_pair": 126,
+        "extra_wrong_role_on_gold_typed_pair": 770
+      },
+      "role_confusions": [
+        {
+          "gold": "编剧",
+          "predicted": "主演",
+          "count": 16
+        },
+        {
+          "gold": "主演",
+          "predicted": "导演",
+          "count": 14
+        },
+        {
+          "gold": "母亲",
+          "predicted": "父亲",
+          "count": 14
+        },
+        {
+          "gold": "歌手",
+          "predicted": "作曲",
+          "count": 9
+        },
+        {
+          "gold": "导演",
+          "predicted": "主演",
+          "count": 8
+        },
+        {
+          "gold": "歌手",
+          "predicted": "作词",
+          "count": 7
+        },
+        {
+          "gold": "作曲",
+          "predicted": "歌手",
+          "count": 7
+        },
+        {
+          "gold": "父亲",
+          "predicted": "母亲",
+          "count": 7
+        },
+        {
+          "gold": "主演",
+          "predicted": "编剧",
+          "count": 6
+        },
+        {
+          "gold": "作词",
+          "predicted": "歌手",
+          "count": 6
+        },
+        {
+          "gold": "丈夫",
+          "predicted": "母亲",
+          "count": 5
+        },
+        {
+          "gold": "丈夫",
+          "predicted": "父亲",
+          "count": 5
+        },
+        {
+          "gold": "母亲",
+          "predicted": "丈夫",
+          "count": 5
+        },
+        {
+          "gold": "主持人",
+          "predicted": "嘉宾",
+          "count": 4
+        },
+        {
+          "gold": "母亲",
+          "predicted": "妻子",
+          "count": 4
+        }
+      ],
+      "interpretation": "描述性错误分类；同表面字符串且同类型实体对。错角色与漏关系类别可重叠；不是人工因果归因。"
+    }
+  }
+}

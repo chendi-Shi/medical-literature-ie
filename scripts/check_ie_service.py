@@ -30,6 +30,10 @@ def check(output=Path('docs/ie-results')):
         for rel in result['relations']:
             assert ents[rel['subject']]['text']==rel['subject_text'] and ents[rel['object']]['text']==rel['object_text']
         assert sum(len(r['mention_links']) for r in result['relation_groups'])==len(result['relations'])
+        downloaded=request(result['export_url'])
+        assert downloaded['text']==text and downloaded['entities']==result['entities'] and downloaded['relations']==result['relations']
+        assert downloaded['run_id']==result['run_id'] and downloaded['relation_groups']==result['relation_groups']
+        result.pop('export_url')
         checks.append({'seconds':time.perf_counter()-started,'result':result})
     first=checks[0]['result']
     assert any(r['predicate']=='作者' and r['subject_text']=='三体' and r['object_text']=='刘慈欣' for r in first['relations'])
@@ -39,7 +43,7 @@ def check(output=Path('docs/ie-results')):
         except urllib.error.HTTPError as error:assert error.code==expected
         else:raise AssertionError('Invalid input accepted')
     artifact={'scope':'手写样例的真实HTTP推理核验，不能用作质量基准；时间含首次CPU加载，样本数不足以宣称生产延迟',
-              'selected_run':report['selected_run'],'checks':checks,'passed':['completed7','validation-selected-default','unicode-span','entity-reference','mention-grouping','bad-path400','oversize422','author-relation']}
+              'selected_run':report['selected_run'],'checks':checks,'passed':['completed7','validation-selected-default','unicode-span','entity-reference','mention-grouping','server-attachment-json-roundtrip','bad-path400','oversize422','author-relation']}
     save_json(output/'service_check.json',artifact)
     for entry in checks:
         print(entry['result']['text'],[(r['subject_text'],r['label'],r['object_text']) for r in entry['result']['relation_groups']])
