@@ -31,10 +31,12 @@
 ```powershell
 python -m scripts.prepare_ie
 python -m scripts.run_ie
+python -m scripts.run_ie_context
 python -m scripts.export_ie
 python -m scripts.analyze_ie
 python -m nlp_lab.ie.cli train --architecture joint --epochs 6 --seed 42
 python -m nlp_lab.ie.cli extract --run RUN_ID --text "刘慈欣是《三体》的作者。"
+python -m nlp_lab.ie_context workspace/ie/runs/CONTEXT_RUN_ID "刘慈欣是《三体》的作者。"
 python -m nlp_lab.ie.cli evaluate --run INDEPENDENT_RUN_ID --split test
 python -m nlp_lab.ie_import own.jsonl --schema own-schema.json --name own-v1
 python -m nlp_lab.ie.cli train --dataset own-v1 --architecture joint --epochs 6
@@ -61,3 +63,11 @@ python -m nlp_lab.cli serve --port 8778
 `workspace/ie/datasets/` 保存划分、来源行与清洗审计；`workspace/ie/runs/` 保存完整 safetensors、tokenizer、配置、逐轮历史和错误；`workspace/ie/research/` 保存冻结协议与汇总。可分享的数值和代码指纹快照在 `docs/ie-results/`，不附原始数据正文。
 
 当前未完成全量长文本训练、完整独立 NER 标注、跨窗口关系、共指消解、真实业务域外部测试、近重复去重、多 GPU、断点续训和生产部署。已有方法的工程实现与可复验对照，不声明原创算法或榜单成绩。
+
+## 关系上下文与位置增强
+
+针对手写推理例子中的“导演 / 主演”语义角色混淆，新增 `nlp_lab/ie_context.py`。关系表示由主语、宾语、实体间文本、各实体左右 4-token 窗口、CLS 共 8 个特征组成，另学习 16 维有向距离桶嵌入。局部均值排除 CLS、SEP 与 padding，无关键词规则。
+
+扩展协议在原组测试开始前固定（[快照](docs/IE_CONTEXT_PROTOCOL.json)），另训练 seed42/43，沿用原训练器、数据、候选负例、损失和 6-epoch 预算。它通过进程内明确的模型工厂替换复用冻结训练器，原核心源码不改动。扩展两次训练及验证阈值选择后才做扩展测试；最终按三种方法的两种子验证均值选模型，不按测试结果挑种子。
+
+网页可独立训练上下文增强模型，推理及评测自动加载正确的抽取头。原 `nlp_lab.ie.cli extract` 适用原流水线/联合模型；增强模型使用上面的 `nlp_lab.ie_context` 命令或网页。两个研究套件均会校验冻结源码与数据指纹；要改模型，应建立新协议版本。

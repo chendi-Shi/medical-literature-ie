@@ -29,7 +29,7 @@ def test_ie_api_task_separation_and_protected_training(tmp_path):
 
 
 def test_ie_inference_preserves_neural_json_and_reuses_cpu_model(tmp_path,monkeypatch):
-    import nlp_lab.ie.predict
+    import nlp_lab.ie_context
     calls=[]
     class MockPredictor:
         def __init__(self,run,device):calls.append((Path(run).name,device))
@@ -37,7 +37,7 @@ def test_ie_inference_preserves_neural_json_and_reuses_cpu_model(tmp_path,monkey
             if not text.strip():raise ValueError('空白文本')
             return {'text':text,'entities':[{'id':'e0','text':'甲','type':'人物','start':1,'end':2}],
                     'relations':[],'offset_unit':'Python Unicode code points, end exclusive'}
-    monkeypatch.setattr(nlp_lab.ie.predict,'Predictor',MockPredictor)
+    monkeypatch.setattr(nlp_lab.ie_context,'Predictor',MockPredictor)
     save_json(tmp_path/'ie/runs/model-a/run.json',{'status':'completed','config':{'architecture':'joint'}})
     client=TestClient(create_app(tmp_path))
     for _ in range(2):

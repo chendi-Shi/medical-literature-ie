@@ -9,7 +9,7 @@ from nlp_lab.ie.predict import Predictor
 from nlp_lab.ie.metrics import evaluate
 
 
-@pytest.mark.parametrize('architecture',['pipeline','joint'])
+@pytest.mark.parametrize('architecture',['pipeline','joint','context_pipeline'])
 def test_ie_fit_sample_accumulation_and_saved_best_reload(tmp_path,architecture):
     from transformers import BertConfig,BertModel,BertTokenizer
     model_dir=tmp_path/'pretrained';model_dir.mkdir()
@@ -24,13 +24,19 @@ def test_ie_fit_sample_accumulation_and_saved_best_reload(tmp_path,architecture)
     hashes={s:digest(dataset/(s+'.jsonl')) for s in ('train','validation','test')}
     save_json(dataset/'manifest.json',{'id':'tiny','split_sha256':hashes,'dataset_sha256':hashlib.sha256(json.dumps(hashes,sort_keys=True).encode()).hexdigest(),
              'entity_types':['人物','机构'],'schemas':[{'id':0,'label':'任职','predicate':'任职','slot':'@value','subject_type':'人物','object_type':'机构'}]})
-    run=allocate(tmp_path,dataset,Config(model=str(model_dir),architecture=architecture,epochs=2,batch_size=2,
+    run=allocate(tmp_path,dataset,Config(model=str(model_dir),architecture='pipeline' if architecture=='context_pipeline' else architecture,epochs=2,batch_size=2,
                                        accumulation=2,max_length=64,mixed_precision='fp32'))
-    fit(run,device='cpu');meta=read_json(run/'run.json')
+    if architecture=='context_pipeline':
+        from nlp_lab.ie.train import update
+        from nlp_lab.ie_context import fit_context
+        update(run,relation_features='context_position');fit_context(run,device='cpu')
+    else:fit(run,device='cpu')
+    meta=read_json(run/'run.json')
     assert meta['status']=='completed' and meta['optimizer_steps']==4 and meta['amp_skipped_updates']==0
     assert len(read_json(run/'history.json'))==2 and not (tmp_path/'.training.lock').exists()
     assert not (run/'test_metrics.json').exists()
-    manifest,rows=load(dataset);predictor=Predictor(run)
+    from nlp_lab.ie_context import predictor_for
+    manifest,rows=load(dataset);predictor=predictor_for(run)
     measured,_=evaluate(rows['validation'],predictor.predict_rows(rows['validation']),manifest)
     saved=read_json(run/'validation_metrics.json')
     assert measured['relation']==saved['relation'] and measured['entity']==saved['entity']

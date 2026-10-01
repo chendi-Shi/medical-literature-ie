@@ -15,7 +15,8 @@ def run_evaluation(run:Path,split:str):
         save_json(status,{'status':'running','split':split})
         manifest,rows=load(Path(meta['dataset_path']))
         if manifest['dataset_sha256']!=meta['dataset_sha256']:raise ValueError('实验数据指纹变化')
-        predictor=Predictor(run,device='cpu')
+        from .ie_context import predictor_for
+        predictor=predictor_for(run,device='cpu')
         metrics,errors=evaluate(rows[split],predictor.predict_rows(rows[split]),manifest)
         save_json(run/(split+'_metrics.json'),metrics);save_json(run/(split+'_errors.json'),[e for e in errors if e['missing'] or e['extra']])
         save_json(status,{'status':'completed','split':split})
@@ -26,7 +27,11 @@ def run_evaluation(run:Path,split:str):
 
 def run_training(run:Path):
     from .ie.train import fit,update
-    try:fit(run)
+    try:
+        if read_json(run/'run.json').get('relation_features')=='context_position':
+            from .ie_context import fit_context
+            fit_context(run)
+        else:fit(run)
     except Exception as e:
         update(run,status='failed',error=f'{type(e).__name__}: {e}')
         raise

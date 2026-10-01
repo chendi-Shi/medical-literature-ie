@@ -68,6 +68,24 @@ def router(workspace:Path):
                     if name in entry['diagnostics']:entry['diagnostics'][name]=compact(entry['diagnostics'][name])
             result['report']=report
         if (research/'analysis.json').exists():result['analysis']=read_json(research/'analysis.json')
+        extension=root/'research'/'duie2-context-10k-v1'
+        if (extension/'state.json').exists():
+            result['context_state']=read_json(extension/'state.json')
+            for entry in result['context_state'].get('entries',[]):
+                result['experiments'].append({**entry,**read_json(checked(entry['run'])/'run.json')})
+            if (extension/'report.json').exists():
+                context=read_json(extension/'report.json')
+                for entry in context['experiments']:
+                    entry['test']=compact(entry['test']);entry['validation']=compact(entry['validation'])
+                result['context_report']=context
+                result['report']['experiments']+=context['experiments']
+                result['report']['aggregates'].update(context['aggregates'])
+                result['report']['validation_means']=context['validation_means']
+                result['report']['selected_architecture']=context['selected_architecture']
+                result['report']['selected_run']=context['selected_run']
+                result['state']['selected_run']=context['selected_run']
+            elif result['state']['phase']=='completed':
+                result['state']['phase']=result['context_state']['phase']
         return result
     @routes.get('/runs')
     def runs():
@@ -113,6 +131,8 @@ def router(workspace:Path):
     @routes.post('/extract')
     def extract(body:ExtractRequest):
         state=read_json(research/'state.json') if (research/'state.json').exists() else {}
+        extension=root/'research'/'duie2-context-10k-v1'/'report.json'
+        if extension.exists():state['selected_run']=read_json(extension)['selected_run']
         run_id=body.run_id or state.get('selected_run')
         if not run_id:raise HTTPException(409,'请先完成训练，再选择一个可用模型')
         run=checked(run_id)
@@ -121,27 +141,28 @@ def router(workspace:Path):
                 threshold_file=run/'thresholds.json'
                 stamp=threshold_file.stat().st_mtime_ns if threshold_file.exists() else None
                 if run_id not in cache or cache[run_id][1]!=stamp:
-                    from .ie.predict import Predictor
-                    cache[run_id]=(Predictor(run,device='cpu'),stamp)
+                    from .ie_context import predictor_for
+                    cache[run_id]=(predictor_for(run,device='cpu'),stamp)
                     while len(cache)>2:cache.popitem(last=False)
                 cache.move_to_end(run_id)
                 result=cache[run_id][0].extract(body.text)
                 return {**result,'relation_groups':group_relations(result),
                         'relation_grouping':'exact typed surface + predicate/slot; mention links preserved, no alias or coreference resolution',
-                        'run_id':run_id,'model_architecture':read_json(run/'run.json')['config']['architecture']}
+                        'run_id':run_id,'model_architecture':'context_pipeline' if read_json(run/'run.json').get('relation_features')=='context_position' else read_json(run/'run.json')['config']['architecture']}
         except ValueError as e:raise HTTPException(400,str(e)) from e
     @routes.post('/train',status_code=202)
     def train(body:IETrainRequest):
-        if (root/'.suite.lock').exists() or (workspace/'.training.lock').exists():
+        if (root/'.suite.lock').exists() or (root/'.context.lock').exists() or (workspace/'.training.lock').exists():
             raise HTTPException(409,'已有训练或冻结研究运行，请等待结束')
         from .ie.train import Config,allocate,update
         import torch
-        config=Config(architecture=body.architecture,epochs=body.epochs,seed=body.seed,freeze_encoder=body.freeze_encoder,
+        config=Config(architecture='pipeline' if body.architecture=='context_pipeline' else body.architecture,epochs=body.epochs,seed=body.seed,freeze_encoder=body.freeze_encoder,
                       mixed_precision='fp16' if torch.cuda.is_available() else 'fp32')
         try:
             dataset=safe_child(root/'datasets',body.dataset_id)
             if not (dataset/'manifest.json').exists():raise ValueError('信息抽取数据版本不存在')
             run=allocate(workspace,dataset,config)
+            if body.architecture=='context_pipeline':update(run,relation_features='context_position')
             with (run/'worker.log').open('a',encoding='utf-8') as log:
                 subprocess.Popen([sys.executable,'-m','nlp_lab.ie_worker','train',str(run)],
                     cwd=Path(__file__).resolve().parents[1],stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,

@@ -9,6 +9,8 @@ from nlp_lab.ie.metrics import prf
 
 def analyze(workspace,output):
     root=workspace/'ie/research'/DATASET;report=read_json(root/'report.json')
+    extension=workspace/'ie/research/duie2-context-10k-v1/report.json'
+    if extension.exists():report['experiments']+=read_json(extension)['experiments']
     manifest,rows=load(workspace/'ie/datasets'/DATASET)
     assert report['protocol']['dataset_sha256']==manifest['dataset_sha256']
     known={(r['text'][a:b],typ) for r in rows['train'] for a,b,typ in entities(r)}
@@ -27,7 +29,7 @@ def analyze(workspace,output):
            'train_support_50_199':[i for i,n in frequency.items() if 50<=n<200],
            'train_support_200_plus':[i for i,n in frequency.items() if n>=200]}
     results={}
-    for name in ('pipeline','joint'):
+    for name in dict.fromkeys(e['name'] for e in report['experiments'] if e['name']!='frozen_encoder'):
         entries=[e for e in report['experiments'] if e['name']==name];values={}
         for group,indices in groups.items():
             metrics=[]
@@ -58,6 +60,10 @@ def analyze(workspace,output):
     for group,label in labels.items():
         value=results['pipeline'][group];unit=f"{value['documents']} 条文本" if 'documents' in value else f"{value['slots']} 个槽位"
         text += [f"- **{label}**（{unit}）：流水线 F1 {100*value['mean_relation_f1']:.2f}%；联合模型 F1 {100*results['joint'][group]['mean_relation_f1']:.2f}%。"]
+    if 'context_pipeline' in results:
+        text+=['','## 上下文与位置增强','']
+        for group,label in labels.items():
+            text += [f"- **{label}**：关系 F1 {100*results['context_pipeline'][group]['mean_relation_f1']:.2f}%。"]
     text += ['',artifact['flow_smoke_disclosure'],'','“未出现”只比较本轮训练标注中的精确表面字符串和实体类型，不代表编码器预训练未见过；没有做实体链接或近重复排除。长尾分组按训练金标槽位频数，全测试集该槽位的正确/预测/金标数聚合为 Micro-F1。','',
              '[原始分组数值](ie-results/subgroups.json) · [主结果](IE_RESULTS.md)','']
     (output.parent/'IE_SUBGROUPS.md').write_text('\n'.join(text),encoding='utf-8',newline='\n')

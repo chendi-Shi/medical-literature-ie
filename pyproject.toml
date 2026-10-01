@@ -16,6 +16,7 @@ report = ["matplotlib>=3.8,<4"]
 
 [project.scripts]
 nlp-lab = "nlp_lab.cli:main"
+nlp-ie = "nlp_lab.ie.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["nlp_lab*"]

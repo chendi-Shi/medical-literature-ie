@@ -6,13 +6,31 @@ from pathlib import Path
 import numpy as np
 from nlp_lab.data import read_json,save_json
 from nlp_lab.ie.data import DATASET,digest,load
-from nlp_lab.ie.suite import source_hashes
+from nlp_lab.ie.suite import source_hashes,summary
 
 def export(workspace,output):
     report=read_json(workspace/'ie/research'/DATASET/'report.json')
+    assert len(report['experiments'])==5
+    baseline_report=report
+    extension_file=workspace/'ie/research/duie2-context-10k-v1/report.json'
+    context=read_json(extension_file) if extension_file.exists() else None
     protocol=report['protocol'];manifest,rows=load(workspace/'ie/datasets'/DATASET)
     assert protocol['dataset_sha256']==manifest['dataset_sha256']
     assert protocol['source_sha256']==source_hashes(),'冻结代码指纹变化'
+    if context:
+        project=Path(__file__).resolve().parents[1]
+        expected={**{'frozen_core/'+k:v for k,v in source_hashes().items()},
+                  'nlp_lab/ie_context.py':digest(project/'nlp_lab/ie_context.py'),
+                  'scripts/run_ie_context.py':digest(project/'scripts/run_ie_context.py')}
+        assert context['protocol']['source_sha256']==expected
+        assert context['protocol']['dataset_sha256']==manifest['dataset_sha256']
+        assert context['protocol']['created_at']<read_json(workspace/'ie/research'/DATASET/'state.json')['test_opened_at']
+        assert len(context['experiments'])==2
+        report={**report,'experiments':report['experiments']+context['experiments'],
+                'aggregates':{**report['aggregates'],**context['aggregates']},'context_protocol':context['protocol'],
+                'context_paired_seed42':context['paired_seed42'],'finished_at':context['finished_at'],
+                'validation_means':context['validation_means'],'selected_architecture':context['selected_architecture'],'selected_run':context['selected_run']}
+        report['aggregates']['context_pipeline']['stress_drop']=summary([e['diagnostics']['stress']['drop_f1'] for e in context['experiments']])
     for entry in report['experiments']:
         run=workspace/'ie/runs'/entry['run']
         assert digest(run/'model.safetensors')==entry['checkpoint_sha256']
@@ -23,20 +41,23 @@ def export(workspace,output):
         assert len(entry['test']['per_relation'])==55
         counts=entry['test']['counts_per_document'];totals={k:sum(x[k] for x in counts) for k in ('correct','predicted','gold')}
         assert abs(2*totals['correct']/(totals['predicted']+totals['gold'])-entry['test']['relation']['f1'])<1e-12
-    assert len(report['experiments'])==5
     output.mkdir(parents=True,exist_ok=True)
+    save_json(output/'baseline_report.json',baseline_report)
+    if context:
+        save_json(output/'context_report.json',context);save_json(output/'context_protocol.json',context['protocol'])
     save_json(output/'protocol.json',protocol);save_json(output/'report.json',report)
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    names=['Pipeline','Joint GPLinker','Frozen encoder'];keys=['pipeline','joint','frozen_encoder']
-    fig,axes=plt.subplots(1,2,figsize=(10,4.2),constrained_layout=True)
-    colors=['#89a993','#24634d','#b8c8ba'];x=np.arange(3)
+    names=['Pipeline','Typed GPLinker','Frozen encoder'];keys=['pipeline','joint','frozen_encoder']
+    if context:names.append('Context + position');keys.append('context_pipeline')
+    fig,axes=plt.subplots(1,2,figsize=(12,4.4),constrained_layout=True)
+    colors=['#89a993','#24634d','#b8c8ba','#be9853'];x=np.arange(len(keys))
     for ax,metric,title in zip(axes,('relation_f1','entity_f1'),('Relation slot exact match','Typed participant entity exact span')):
         values=[100*report['aggregates'][k][metric]['mean'] for k in keys]
         std=[100*(report['aggregates'][k][metric]['std'] or 0) for k in keys]
         ax.bar(x,values,color=colors,yerr=std,capsize=4,width=.65)
-        ax.set_xticks(x,names);ax.set_ylim(0,100);ax.set_ylabel('Test micro-F1 (%)');ax.set_title(title,fontsize=11)
+        ax.set_xticks(x,names,rotation=12);ax.set_ylim(0,100);ax.set_ylabel('Test micro-F1 (%)');ax.set_title(title,fontsize=11)
         ax.spines[['top','right']].set_visible(False);ax.grid(axis='y',alpha=.18);ax.set_axisbelow(True)
         for i,v in enumerate(values):ax.text(i,v+std[i]+2,f'{v:.2f}',ha='center',fontsize=10)
     fig.suptitle('DuIE2 binary-slot subset: 10k train / 2k validation / 4k test',fontsize=12)
@@ -54,12 +75,16 @@ def export(workspace,output):
            '## 数据与指标','',
            f"固定训练 10,000、验证 2,000、测试 4,000 条；训练二元槽位 18,243 个、测试槽位 7,453 个。55 槽位 schema、26 实体类型。训练覆盖全部 55 槽位，验证与测试各覆盖 53；固定 55 槽位 Macro-F1 将无真实支持槽位也计入。",'',
            '关系按带类型主客体表面字符串与 predicate/slot 精确匹配；实体按关系参与者的派生字符跨度匹配。官方复杂 object 拆为二元槽位，不等于完整多槽 SPO 评测。数据为清洗后的短文本固定子集，不是全量 DuIE 结果。', '',
-           '早期流程自测曾用前 12 条测试文本核验小规模 checkpoint 重载，未用于正式选模或阈值；正式五个模型的完整测试均在训练和验证选择后统一执行。另见 [排除这 12 条及难度分组核验](IE_SUBGROUPS.md)，不能称测试文本从未在任何流程中读取。','',
+           '早期流程自测曾用前 12 条测试文本核验小规模 checkpoint 重载，未用于正式选模或阈值；正式原组五个模型在该组训练和验证选择后统一评测；上下文扩展两种子协议在原组测试开始前固定，并在两次扩展训练与验证选择后统一评测。另见 [排除这 12 条及难度分组核验](IE_SUBGROUPS.md)，不能称测试文本从未在任何流程中读取。','',
            f"数据 SHA-256：`{manifest['dataset_sha256']}`。来源、清洗、开源代码阅读范围见 [IE_RESEARCH.md](IE_RESEARCH.md)。",'',
            '## 同预算对照','']
     for k in keys:
         a=report['aggregates'][k]
         lines += [f"- **{k}**：关系 F1 {stat(a['relation_f1'])}；实体 F1 {stat(a['entity_f1'])}；中性前缀压力下降 {100*a['stress_drop']['mean']:.2f} pp。"]
+    if context:
+        gain=report['aggregates']['context_pipeline']['relation_f1']['mean']-baseline
+        interval=context['paired_seed42']
+        lines+=['',f"上下文与位置增强相对原流水线，两种子测试均值变化 {100*gain:+.2f} pp；seed42 配对差值 {100*interval['delta_relation_f1']:+.2f} pp，条件95%区间 [{100*interval['ci95'][0]:+.2f}, {100*interval['ci95'][1]:+.2f}]。新增实体两侧/实体间均值池化与有向距离嵌入，共8个文本特征，保持原训练器、loss与训练预算。" ]
     interval=report['paired_seed42']
     lines+=['',f"两种子均值下，联合模型相对流水线变化 {(joint-baseline)*100:+.2f} pp。seed42 文本配对差值 {100*interval['delta_relation_f1']:+.2f} pp，条件 95% 区间 [{100*interval['ci95'][0]:+.2f}, {100*interval['ci95'][1]:+.2f}]。600 次配对文本 bootstrap，固定模型，不含训练种子总体不确定性，无多重比較校正。",'',
             '## 诊断、消融与部署','',
@@ -67,7 +92,7 @@ def export(workspace,output):
             '中性前缀压力使用同组 1,000 条测试文本、固定 seed2027，在原文前加“信息：”并平移所有跨度。它只说明前缀敏感性，不能代替真实业务外部测试。', '',
             f"默认 run：`{report['selected_run']}`。seed42 模型 {representative['parameters']:,} 参数，完整训练含验证和保存 {representative['seconds']:.1f} 秒，PyTorch 峰值分配显存 {representative['peak_cuda_memory_mb']:.1f} MiB。编码器版本 `{representative['model_revision']}`。",'',
             '## 可以写入简历的表述','',
-            f"> 实现中文实体与关系联合抽取系统，基于 DuIE2 清洗构建 10k/2k/4k 固定划分，使用中文预训练编码器与带类型跨度 GPLinker，并完成流水线对照、两种子评测、实体误差级联诊断及解码/冻结消融；在当前二元槽位子集取得关系 Micro-F1 {100*aggregate['relation_f1']['mean']:.2f}%，提供原文定位和结构化 JSON 推理。",'',
+            f"> 实现中文实体与关系联合抽取系统，基于 DuIE2 清洗构建 10k/2k/4k 固定划分，微调中文预训练编码器，比较实体关系流水线、上下文位置增强与带类型跨度 GPLinker，完成两种子评测、实体误差级联诊断及解码/冻结消融；在当前二元槽位子集取得关系 Micro-F1 {100*aggregate['relation_f1']['mean']:.2f}%，提供原文定位和结构化 JSON 推理。",'',
             '上述成绩不能写成官方 DuIE 榜单、完整 NER 指标、原创算法或生产上线效果。模型仅支持有限 schema，长文本窗口不保证跨窗口关系；分数未校准。', '',
             '## 可核验证据','',
             '- [冻结协议](ie-results/protocol.json)：数据与代码指纹、全部配方、阈值/选模/测试政策。',

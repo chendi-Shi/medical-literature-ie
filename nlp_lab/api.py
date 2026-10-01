@@ -159,7 +159,7 @@ def create_app(workspace: Path):
 
     @app.post("/api/runs", status_code=202)
     def train(body: TrainRequest):
-        if (workspace / "ie" / ".suite.lock").exists():
+        if (workspace / "ie" / ".suite.lock").exists() or (workspace / "ie" / ".context.lock").exists():
             raise HTTPException(409, "信息抽取研究正在运行，请等待结束")
         if research_state().get("phase") in ("training", "evaluating"):
             raise HTTPException(409, "研究套件正在运行，完成后可新增独立实验")
