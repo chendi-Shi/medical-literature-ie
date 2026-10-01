@@ -12,3 +12,4 @@
 *.pdf binary
 # Research snapshots preserve the exact bytes used by their recorded SHA-256.
 docs/results/*.json -text
+docs/ie-results/*.json -text

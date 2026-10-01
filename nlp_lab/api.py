@@ -51,7 +51,9 @@ class PredictRequest(BaseModel):
 
 def create_app(workspace: Path):
     workspace = workspace.resolve()
-    app = FastAPI(title="NLP Training Lab", version="0.2.0")
+    app = FastAPI(title="Chinese Information Extraction Lab", version="0.3.0")
+    from .ie_api import router
+    app.include_router(router(workspace))
 
     @app.middleware("http")
     async def local_requests(request: Request, call_next):
@@ -106,7 +108,7 @@ def create_app(workspace: Path):
 
     @app.get("/assets/{name}")
     def assets(name: str):
-        if name not in ("research.js", "research.css"):
+        if name not in ("research.js", "research.css", "ie.js", "ie.css"):
             raise HTTPException(404, "文件不存在")
         return FileResponse(Path(__file__).parent / "web" / name)
 
@@ -157,6 +159,8 @@ def create_app(workspace: Path):
 
     @app.post("/api/runs", status_code=202)
     def train(body: TrainRequest):
+        if (workspace / "ie" / ".suite.lock").exists():
+            raise HTTPException(409, "信息抽取研究正在运行，请等待结束")
         if research_state().get("phase") in ("training", "evaluating"):
             raise HTTPException(409, "研究套件正在运行，完成后可新增独立实验")
         if (workspace / ".training.lock").exists():
