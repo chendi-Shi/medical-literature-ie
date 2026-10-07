@@ -16,6 +16,8 @@ Linux 可用 `source .venv/bin/activate`。训练需要合适的 PyTorch CUDA �
 
 新 clone **不附带已训练权重、原始语料、论文 XML 或 SQLite**。空工作区显示未训练，不会把仓库中的历史分数伪装成已部署的模型。已有实际模型评测见 [MEDICAL_RESULTS.md](MEDICAL_RESULTS.md)；报告 JSON 的哈希可以离线核验。请先查看各原始数据来源协议，下载脚本的 SHA 是本项目核验值，并非发布方签名。
 
+内部 HTTPS 试点部署、密钥配置、反向代理和备份说明见 [PRODUCTION.md](PRODUCTION.md)。新 clone 缺少模型文件和工作区数据库，按指南完成离线数据与权重准备后才会通过 readiness 检查。
+
 完整医学复现：
 
 ```powershell

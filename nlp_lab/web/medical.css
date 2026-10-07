@@ -3,3 +3,5 @@
 .binding{background:var(--light);padding:12px;margin:10px 0;border-radius:4px}.binding button{display:block;margin-top:10px}.bindings{margin-bottom:14px}
 
 .context-card{background:#edf1f6;padding:12px;margin:12px 0;border-left:3px solid #71869c;overflow-wrap:anywhere}
+
+#appMain[hidden],#loginPanel[hidden]{display:none}.login{max-width:440px;margin:12vh auto;padding:28px}.login form{display:grid;gap:10px}.login input{width:100%}#loginError{color:#8e2e2e}

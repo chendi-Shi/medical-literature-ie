@@ -106,8 +106,9 @@ def router(workspace):
     @routes.get('/extractions/{identifier}')
     def result(identifier:str):return extract(identifier)
     @routes.post('/extractions/{identifier}/records/{record_id}/review')
-    def review(identifier:str,record_id:str,body:ReviewRequest):
-        try:return store.review(identifier,record_id,body.expected_revision,body.status,body.reviewer,
+    def review(identifier:str,record_id:str,body:ReviewRequest,request:Request):
+        reviewer=getattr(request.state,'medical_user',None) or body.reviewer
+        try:return store.review(identifier,record_id,body.expected_revision,body.status,reviewer,
                                  body.model_dump(exclude={'expected_revision','status','reviewer'},exclude_unset=True))
         except Conflict as e:raise HTTPException(409,str(e)) from e
         except KeyError as e:raise HTTPException(404,str(e)) from e
@@ -117,8 +118,9 @@ def router(workspace):
     def history(identifier:str,record_id:str):
         extract(identifier);return store.history(identifier,record_id)
     @routes.post('/extractions/{identifier}/entities/{entity_id}/review')
-    def entity_review(identifier:str,entity_id:str,body:EntityReviewRequest):
-        try:return store.review_entity(identifier,entity_id,body.expected_revision,body.status,body.reviewer,body.type,body.canonical,body.note)
+    def entity_review(identifier:str,entity_id:str,body:EntityReviewRequest,request:Request):
+        reviewer=getattr(request.state,'medical_user',None) or body.reviewer
+        try:return store.review_entity(identifier,entity_id,body.expected_revision,body.status,reviewer,body.type,body.canonical,body.note)
         except Conflict as e:raise HTTPException(409,str(e)) from e
         except KeyError as e:raise HTTPException(404,str(e)) from e
         except ValueError as e:raise HTTPException(400,str(e)) from e

@@ -1,0 +1,27 @@
+[Unit]
+Description=Chinese Medical Literature Workbench
+After=network.target
+
+[Service]
+Type=simple
+User=medical
+Group=medical
+WorkingDirectory=/opt/medical-literature-ie
+EnvironmentFile=/etc/medical-workbench/environment
+Environment=PYTHONUNBUFFERED=1
+Environment=HF_HUB_OFFLINE=1
+ExecStart=/opt/medical-literature-ie/.venv/bin/python -m nlp_lab.cli --workspace /srv/medical/workspace serve --port 8778 --production
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/medical/workspace
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+MemoryDenyWriteExecute=false
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,41 @@
+# Put the limit zones inside nginx's http {} block.
+limit_req_zone $binary_remote_addr zone=medical_login:10m rate=1r/m;
+limit_req_zone $binary_remote_addr zone=medical_api:10m rate=20r/s;
+limit_conn_zone $binary_remote_addr zone=medical_clients:10m;
+
+log_format medical_private '$remote_addr $request_method $uri $status $body_bytes_sent $request_time';
+
+server {
+    listen 443 ssl;
+    server_name medical.example.org;
+
+    ssl_certificate /etc/letsencrypt/live/medical.example.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/medical.example.org/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+
+    client_max_body_size 2m;
+    client_body_timeout 30s;
+    limit_conn medical_clients 20;
+    limit_req_status 429;
+    access_log /var/log/nginx/medical_access.log medical_private;
+
+    location = /api/auth/login {
+        limit_req zone=medical_login burst=3 nodelay;
+        proxy_pass http://127.0.0.1:8778;
+        include /etc/nginx/snippets/medical-upstream-headers.conf;
+    }
+
+    location / {
+        limit_req zone=medical_api burst=40 nodelay;
+        proxy_pass http://127.0.0.1:8778;
+        include /etc/nginx/snippets/medical-upstream-headers.conf;
+        proxy_read_timeout 180s;
+    }
+}
+
+server {
+    listen 80;
+    server_name medical.example.org;
+    return 301 https://$host$request_uri;
+}

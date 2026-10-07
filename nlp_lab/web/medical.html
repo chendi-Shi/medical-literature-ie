@@ -2,8 +2,9 @@
 <html lang="zh-CN">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>医学文献证据抽取</title><link rel="stylesheet" href="/assets/medical.css"></head>
 <body>
-<header><a href="/">MEDICAL · EVIDENCE</a><span>中文医学文献 → 可追溯记录</span><a href="/lab">通用抽取实验</a></header>
-<main>
+<header><a href="/">MEDICAL · EVIDENCE</a><span>中文医学文献 → 可追溯记录</span><a href="/lab">通用抽取实验</a><button id="logoutButton" type="button" hidden>退出登录</button></header>
+<section id="loginPanel" class="panel login" aria-labelledby="loginTitle" hidden><h1 id="loginTitle">登录研究工作台</h1><p>文献和核验记录由受保护的服务提供。</p><form id="loginForm"><label for="loginUser">账号</label><input id="loginUser" name="username" autocomplete="username" required maxlength="128"><label for="loginPassword">密码</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button type="submit">登录</button></form><p id="loginError" role="status" aria-live="polite"></p></section>
+<main id="appMain" hidden>
 <section class="hero"><div><small>文献研究工作台</small><h1>结论有条件，记录有出处。</h1><p>识别疾病与药物，定位研究对象、疗效及不良事件证据；保留组别、统计量与否定表达，逐条核验后导出。</p></div><div id="phase" class="status">加载模型状态…</div></section>
 <section class="stats" aria-label="实测模型指标"><div><small>医学实体 · 精确跨度 F1</small><strong id="nerMetric">—</strong><span id="nerScope">独立医学实体监督</span></div><div><small>医学关系 · 三元组 F1</small><strong id="reMetric">—</strong><span id="reScope">CMeIE，独立保留集</span></div><div><small>已收录真实文献</small><strong id="docMetric">—</strong><span>原文与抽取版本保存在本机</span></div></section>
 <p class="scope">指标只评测医学实体与关系模型。疗效、组别和不良事件记录由证据规则生成候选，需核验；当前不支持自动绑定跨句组别和数值。</p>

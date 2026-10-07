@@ -7,12 +7,13 @@ import tempfile
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 from .cli import safe_child
 from .data import prepare, read_json
 from .training import Predictor, TrainConfig, allocate_run, compare_runs, update_run
+from .security import LoginThrottle, ProductionSecurity, SESSION_COOKIE, SESSION_SECONDS
 
 
 class ImportRequest(BaseModel):
@@ -49,9 +50,20 @@ class PredictRequest(BaseModel):
     texts: list[str] = Field(min_length=1, max_length=128)
 
 
-def create_app(workspace: Path):
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=128)
+    password: str = Field(min_length=1, max_length=1024)
+
+
+def create_app(workspace: Path, *, production: bool = False):
     workspace = workspace.resolve()
-    app = FastAPI(title="Chinese Medical Literature Extraction", version="0.7.0")
+    security = ProductionSecurity.from_environment() if production else None
+    app = FastAPI(title="Chinese Medical Literature Extraction", version="0.8.0",
+                  docs_url=None if production else "/docs", redoc_url=None if production else "/redoc",
+                  openapi_url=None if production else "/openapi.json")
+    throttle = LoginThrottle()
+    app.state.production = production
+    app.state.security = security
     from .ie_api import router
     app.include_router(router(workspace))
     from .medical.api import router as medical_router
@@ -59,15 +71,19 @@ def create_app(workspace: Path):
 
     @app.middleware("http")
     async def local_requests(request: Request, call_next):
-        # Local single-user tool: reject cross-origin browser writes and Host rebinding.
-        host = request.headers.get("host", "").split(":")[0]
-        if host not in ("127.0.0.1", "localhost", "testserver"):
-            from fastapi.responses import JSONResponse
-            return JSONResponse({"detail": "仅接受本地请求"}, status_code=403)
-        if request.method != "GET":
+        from urllib.parse import urlsplit
+        host = urlsplit("//" + request.headers.get("host", "")).hostname
+        health = request.url.path in ("/health/live", "/health/ready")
+        if not health:
+            allowed = security.allowed_hosts if security else frozenset(("127.0.0.1", "localhost", "testserver"))
+            if not host or host.lower().rstrip(".") not in allowed:
+                return JSONResponse({"detail": "请求主机不在允许列表" if production else "仅接受本地请求"}, status_code=403)
+        if request.method not in ("GET", "HEAD", "OPTIONS"):
             origin = request.headers.get("origin")
-            if origin and origin != f"http://{request.headers.get('host')}":
-                from fastapi.responses import JSONResponse
+            if production:
+                if origin != security.public_origin:
+                    return JSONResponse({"detail": "不接受跨站写入"}, status_code=403)
+            elif origin and origin != f"http://{request.headers.get('host')}":
                 return JSONResponse({"detail": "不接受跨站写入"}, status_code=403)
         try:
             declared_length = int(request.headers.get("content-length", "0"))
@@ -76,10 +92,88 @@ def create_app(workspace: Path):
         if declared_length > 2_000_000:
             from fastapi.responses import JSONResponse
             return JSONResponse({"detail": "请求超过 2MB 限制"}, status_code=413)
-        if request.method != "GET" and len(await request.body()) > 2_000_000:
-            from fastapi.responses import JSONResponse
+        if request.method not in ("GET", "HEAD") and len(await request.body()) > 2_000_000:
             return JSONResponse({"detail": "请求超过 2MB 限制"}, status_code=413)
-        return await call_next(request)
+
+        protected = request.url.path.startswith("/api/") and request.url.path not in (
+            "/api/auth/session", "/api/auth/login")
+        if production and protected:
+            identity = security.identity(request.cookies.get(SESSION_COOKIE))
+            if identity is None:
+                response = JSONResponse({"detail": "登录已失效，请重新登录"}, status_code=401)
+                response.headers["Cache-Control"] = "no-store"
+                return response
+            request.state.medical_user = identity
+
+        response = await call_next(request)
+        if production:
+            response.headers.setdefault("X-Content-Type-Options", "nosniff")
+            response.headers.setdefault("X-Frame-Options", "DENY")
+            response.headers.setdefault("Referrer-Policy", "no-referrer")
+            response.headers.setdefault("Content-Security-Policy", "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'")
+            if request.url.path.startswith("/api/"):
+                response.headers["Cache-Control"] = "no-store"
+        return response
+
+    @app.get("/health/live")
+    def live():
+        return {"status": "ok"}
+
+    @app.get("/health/ready")
+    def ready():
+        import sqlite3
+        root = workspace / "medical"
+        if not (root / "status.json").exists() or not (root / "report.json").exists():
+            raise HTTPException(503, "service unavailable")
+        try:
+            status = read_json(root / "status.json")
+            report = read_json(root / "report.json")
+            relation_run = Path(status["relation_run"])
+            if not relation_run.is_absolute():
+                repo_relative = workspace.parent / relation_run
+                relation_run = repo_relative if repo_relative.exists() else workspace / relation_run
+            if status["phase"] != "completed" or not (relation_run / "model.safetensors").is_file():
+                raise ValueError("incomplete model")
+            ner_run = root / "runs" / "ner-v1"
+            if not report.get("weights_sha256", {}).get("ner") or not (ner_run / "model.safetensors").is_file():
+                raise ValueError("incomplete NER model")
+            with sqlite3.connect(f"file:{(root / 'literature.sqlite3').as_posix()}?mode=ro", uri=True, timeout=1) as db:
+                db.execute("SELECT 1").fetchone()
+        except (OSError, ValueError, KeyError, sqlite3.Error):
+            raise HTTPException(503, "service unavailable") from None
+        return {"status": "ready"}
+
+    @app.get("/api/auth/session")
+    def auth_session(request: Request):
+        return {"required": production,
+                "authenticated": not production or security.identity(request.cookies.get(SESSION_COOKIE)) is not None}
+
+    @app.post("/api/auth/login")
+    def auth_login(request: Request, body: LoginRequest):
+        if not production:
+            raise HTTPException(404, "Not found")
+        client = request.client.host if request.client else "unknown"
+        retry = throttle.retry_after(client)
+        if retry:
+            return JSONResponse({"detail": "登录尝试过多，请稍后重试"}, status_code=429,
+                                headers={"Retry-After": str(retry), "Cache-Control": "no-store"})
+        if not security.password_matches(body.username, body.password):
+            retry = throttle.record_failure(client)
+            headers = {"Cache-Control": "no-store"}
+            if retry:
+                headers["Retry-After"] = str(retry)
+            return JSONResponse({"detail": "用户名或密码错误"}, status_code=401, headers=headers)
+        throttle.clear(client)
+        response = JSONResponse({"authenticated": True}, headers={"Cache-Control": "no-store"})
+        response.set_cookie(SESSION_COOKIE, security.issue(), max_age=SESSION_SECONDS, path="/",
+                            secure=True, httponly=True, samesite="strict")
+        return response
+
+    @app.post("/api/auth/logout")
+    def auth_logout():
+        response = JSONResponse({"authenticated": False}, headers={"Cache-Control": "no-store"})
+        response.delete_cookie(SESSION_COOKIE, path="/", secure=True, httponly=True, samesite="strict")
+        return response
 
     def checked(parent, name, required=True):
         try:

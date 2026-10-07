@@ -53,6 +53,7 @@ def parser():
     a.add_argument("--model", default="BAAI/bge-small-zh-v1.5")
     a = sub.add_parser("serve")
     a.add_argument("--port", type=int, default=8778)
+    a.add_argument("--production", action="store_true", help="开启单账号认证和生产访问限制；必须放在 TLS 反向代理之后")
     return p
 
 
@@ -101,7 +102,9 @@ def main():
         else:
             import uvicorn
             from .api import create_app
-            uvicorn.run(create_app(workspace), host="127.0.0.1", port=args.port)
+            uvicorn.run(create_app(workspace, production=args.production), host="127.0.0.1", port=args.port,
+                         access_log=not args.production, proxy_headers=args.production,
+                         forwarded_allow_ips="127.0.0.1")
             return
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except (ValueError, FileNotFoundError, FileExistsError, OSError) as e:

@@ -13,9 +13,14 @@ class Conflict(ValueError): pass
 
 
 class Store:
+    schema_version = 1
+
     def __init__(self,path):
         self.path=Path(path);self.path.parent.mkdir(parents=True,exist_ok=True)
         with self.connect() as db:
+            current=db.execute('PRAGMA user_version').fetchone()[0]
+            if current>self.schema_version:
+                raise RuntimeError(f'文献数据库版本 {current} 高于当前程序支持的版本 {self.schema_version}')
             db.executescript('''
                 PRAGMA journal_mode=WAL;
                 CREATE TABLE IF NOT EXISTS documents(id TEXT PRIMARY KEY, sha TEXT UNIQUE NOT NULL, payload TEXT NOT NULL, created TEXT NOT NULL);
@@ -25,6 +30,7 @@ class Store:
                     PRIMARY KEY(extraction_id,record_id,revision));
                 CREATE VIRTUAL TABLE IF NOT EXISTS evidence_search USING fts5(extraction_id UNINDEXED, record_id UNINDEXED, text, tokenize='trigram');
             ''')
+            db.execute(f'PRAGMA user_version={self.schema_version}')
 
     @contextmanager
     def connect(self):
