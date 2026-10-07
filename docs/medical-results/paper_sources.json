@@ -1,0 +1,32 @@
+[
+  {
+    "pmc": "PMC10918247",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10918247/fullTextXML",
+    "source_sha256": "b1826d988a03b2dbdb7f4394970f189b04e6f2e92265086a71e8c052fbf06fef",
+    "document_id": "d2330e0d97b14134afaf577d97533314",
+    "text_sha256": "408f59a664990086f3a830695beea1a5f5d343ec01d791b6f28dc9aaa92ce174",
+    "characters": 9737,
+    "title": "驱动基因阴性非小细胞肺癌二线治疗中国专家共识",
+    "licenses": [
+      {
+        "text": "https://creativecommons.org/licenses/by/3.0/This is an open access article distributed in accordance with the terms of the Creative Commons Attribution (CC BY 3.0) License. See: https://creativecommons.org/licenses/by/3.0/.",
+        "href": null
+      }
+    ]
+  },
+  {
+    "pmc": "PMC11534547",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11534547/fullTextXML",
+    "source_sha256": "e4b2f07d0b2ebb4924fd53773de953842bc988751ccdecc438dfe964a0c44bd0",
+    "document_id": "42959de4444c4e4d887dfa599fe370c5",
+    "text_sha256": "337e9d8bfa37f98f24e3031c2b0cf279d8a5ba9907a8e6368a5cf5e83b69f479",
+    "characters": 21031,
+    "title": "免疫单药与免疫联合化疗在75岁及以上晚期非小细胞肺癌患者中的疗效与安全性对比",
+    "licenses": [
+      {
+        "text": "This is an open access article distributed in accordance with the terms of the Creative Commons Attribution (CC BY 3.0) License. See: https://creativecommons.org/licenses/by/3.0/.",
+        "href": null
+      }
+    ]
+  }
+]

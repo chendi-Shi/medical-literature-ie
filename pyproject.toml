@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nlp-training-lab"
-version = "0.3.0"
-description = "Chinese entity and relation extraction with reproducible NLP experiments"
+version = "0.4.0"
+description = "Chinese medical literature extraction, source evidence and reproducible NLP training"
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.26,<3", "scipy>=1.11,<2", "scikit-learn>=1.5,<2", "joblib>=1.3,<2", "fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
 
@@ -17,6 +17,7 @@ report = ["matplotlib>=3.8,<4"]
 [project.scripts]
 nlp-lab = "nlp_lab.cli:main"
 nlp-ie = "nlp_lab.ie_commands:main"
+nlp-medical = "nlp_lab.medical.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["nlp_lab*"]

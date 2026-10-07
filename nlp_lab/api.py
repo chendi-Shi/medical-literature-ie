@@ -51,9 +51,11 @@ class PredictRequest(BaseModel):
 
 def create_app(workspace: Path):
     workspace = workspace.resolve()
-    app = FastAPI(title="Chinese Information Extraction Lab", version="0.3.0")
+    app = FastAPI(title="Chinese Medical Literature Extraction", version="0.4.0")
     from .ie_api import router
     app.include_router(router(workspace))
+    from .medical.api import router as medical_router
+    app.include_router(medical_router(workspace))
 
     @app.middleware("http")
     async def local_requests(request: Request, call_next):
@@ -104,11 +106,15 @@ def create_app(workspace: Path):
 
     @app.get("/", response_class=HTMLResponse)
     def index():
-        return (Path(__file__).parent / "web" / "index.html").read_text(encoding="utf-8")
+        return (Path(__file__).parent / "web" / "medical.html").read_text(encoding="utf-8")
+
+    @app.get('/lab',response_class=HTMLResponse)
+    def legacy_lab():
+        return (Path(__file__).parent / 'web' / 'index.html').read_text(encoding='utf-8')
 
     @app.get("/assets/{name}")
     def assets(name: str):
-        if name not in ("research.js", "research.css", "ie.js", "ie.css"):
+        if name not in ("research.js", "research.css", "ie.js", "ie.css", "medical.js", "medical.css"):
             raise HTTPException(404, "文件不存在")
         return FileResponse(Path(__file__).parent / "web" / name)
 

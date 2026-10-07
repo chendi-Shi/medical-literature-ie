@@ -1,0 +1,548 @@
+[
+  {
+    "epoch": 1,
+    "loss": 1.8611525423556456,
+    "validation": {
+      "documents": 1500,
+      "micro": {
+        "correct": 1165,
+        "predicted": 1592,
+        "gold": 5815,
+        "precision": 0.7317839195979899,
+        "recall": 0.2003439380911436,
+        "f1": 0.31456730120156606
+      },
+      "per_type": {
+        "bod": {
+          "correct": 285,
+          "predicted": 389,
+          "gold": 1676,
+          "precision": 0.7326478149100257,
+          "recall": 0.17004773269689738,
+          "f1": 0.27602905569007263
+        },
+        "dep": {
+          "correct": 0,
+          "predicted": 0,
+          "gold": 29,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "dis": {
+          "correct": 540,
+          "predicted": 709,
+          "gold": 1420,
+          "precision": 0.7616361071932299,
+          "recall": 0.38028169014084506,
+          "f1": 0.5072804133395961
+        },
+        "dru": {
+          "correct": 101,
+          "predicted": 134,
+          "gold": 413,
+          "precision": 0.753731343283582,
+          "recall": 0.24455205811138014,
+          "f1": 0.36928702010968917
+        },
+        "equ": {
+          "correct": 0,
+          "predicted": 0,
+          "gold": 80,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "ite": {
+          "correct": 0,
+          "predicted": 0,
+          "gold": 227,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "mic": {
+          "correct": 17,
+          "predicted": 21,
+          "gold": 167,
+          "precision": 0.8095238095238095,
+          "recall": 0.10179640718562874,
+          "f1": 0.18085106382978722
+        },
+        "pro": {
+          "correct": 198,
+          "predicted": 308,
+          "gold": 645,
+          "precision": 0.6428571428571429,
+          "recall": 0.30697674418604654,
+          "f1": 0.4155299055613851
+        },
+        "sym": {
+          "correct": 24,
+          "predicted": 31,
+          "gold": 1158,
+          "precision": 0.7741935483870968,
+          "recall": 0.02072538860103627,
+          "f1": 0.040370058873002525
+        }
+      }
+    },
+    "optimizer_steps": 465,
+    "amp_skipped_updates": 0
+  },
+  {
+    "epoch": 2,
+    "loss": 0.7527289171284676,
+    "validation": {
+      "documents": 1500,
+      "micro": {
+        "correct": 2070,
+        "predicted": 2924,
+        "gold": 5815,
+        "precision": 0.7079343365253078,
+        "recall": 0.35597592433361996,
+        "f1": 0.4737384140061792
+      },
+      "per_type": {
+        "bod": {
+          "correct": 602,
+          "predicted": 856,
+          "gold": 1676,
+          "precision": 0.7032710280373832,
+          "recall": 0.35918854415274465,
+          "f1": 0.4755134281200632
+        },
+        "dep": {
+          "correct": 16,
+          "predicted": 25,
+          "gold": 29,
+          "precision": 0.64,
+          "recall": 0.5517241379310345,
+          "f1": 0.5925925925925927
+        },
+        "dis": {
+          "correct": 793,
+          "predicted": 1114,
+          "gold": 1420,
+          "precision": 0.7118491921005387,
+          "recall": 0.5584507042253521,
+          "f1": 0.6258879242304656
+        },
+        "dru": {
+          "correct": 229,
+          "predicted": 303,
+          "gold": 413,
+          "precision": 0.7557755775577558,
+          "recall": 0.5544794188861986,
+          "f1": 0.6396648044692738
+        },
+        "equ": {
+          "correct": 12,
+          "predicted": 19,
+          "gold": 80,
+          "precision": 0.631578947368421,
+          "recall": 0.15,
+          "f1": 0.2424242424242424
+        },
+        "ite": {
+          "correct": 13,
+          "predicted": 30,
+          "gold": 227,
+          "precision": 0.43333333333333335,
+          "recall": 0.05726872246696035,
+          "f1": 0.10116731517509728
+        },
+        "mic": {
+          "correct": 54,
+          "predicted": 67,
+          "gold": 167,
+          "precision": 0.8059701492537313,
+          "recall": 0.32335329341317365,
+          "f1": 0.46153846153846156
+        },
+        "pro": {
+          "correct": 200,
+          "predicted": 272,
+          "gold": 645,
+          "precision": 0.7352941176470589,
+          "recall": 0.31007751937984496,
+          "f1": 0.4362050163576881
+        },
+        "sym": {
+          "correct": 151,
+          "predicted": 238,
+          "gold": 1158,
+          "precision": 0.634453781512605,
+          "recall": 0.1303972366148532,
+          "f1": 0.2163323782234957
+        }
+      }
+    },
+    "optimizer_steps": 930,
+    "amp_skipped_updates": 0
+  },
+  {
+    "epoch": 3,
+    "loss": 0.6784748704575481,
+    "validation": {
+      "documents": 1500,
+      "micro": {
+        "correct": 2844,
+        "predicted": 4431,
+        "gold": 5815,
+        "precision": 0.6418415707515234,
+        "recall": 0.4890799656061909,
+        "f1": 0.555143470622682
+      },
+      "per_type": {
+        "bod": {
+          "correct": 836,
+          "predicted": 1277,
+          "gold": 1676,
+          "precision": 0.6546593578700078,
+          "recall": 0.4988066825775656,
+          "f1": 0.5662038604808669
+        },
+        "dep": {
+          "correct": 16,
+          "predicted": 24,
+          "gold": 29,
+          "precision": 0.6666666666666666,
+          "recall": 0.5517241379310345,
+          "f1": 0.6037735849056604
+        },
+        "dis": {
+          "correct": 1004,
+          "predicted": 1542,
+          "gold": 1420,
+          "precision": 0.6511024643320363,
+          "recall": 0.7070422535211267,
+          "f1": 0.6779203241053342
+        },
+        "dru": {
+          "correct": 310,
+          "predicted": 452,
+          "gold": 413,
+          "precision": 0.6858407079646017,
+          "recall": 0.7506053268765133,
+          "f1": 0.7167630057803467
+        },
+        "equ": {
+          "correct": 22,
+          "predicted": 39,
+          "gold": 80,
+          "precision": 0.5641025641025641,
+          "recall": 0.275,
+          "f1": 0.3697478991596639
+        },
+        "ite": {
+          "correct": 30,
+          "predicted": 77,
+          "gold": 227,
+          "precision": 0.38961038961038963,
+          "recall": 0.13215859030837004,
+          "f1": 0.19736842105263155
+        },
+        "mic": {
+          "correct": 86,
+          "predicted": 116,
+          "gold": 167,
+          "precision": 0.7413793103448276,
+          "recall": 0.5149700598802395,
+          "f1": 0.6077738515901059
+        },
+        "pro": {
+          "correct": 325,
+          "predicted": 552,
+          "gold": 645,
+          "precision": 0.5887681159420289,
+          "recall": 0.5038759689922481,
+          "f1": 0.5430242272347536
+        },
+        "sym": {
+          "correct": 215,
+          "predicted": 352,
+          "gold": 1158,
+          "precision": 0.6107954545454546,
+          "recall": 0.18566493955094993,
+          "f1": 0.2847682119205298
+        }
+      }
+    },
+    "optimizer_steps": 1395,
+    "amp_skipped_updates": 0
+  },
+  {
+    "epoch": 4,
+    "loss": 0.6373292470792856,
+    "validation": {
+      "documents": 1500,
+      "micro": {
+        "correct": 2871,
+        "predicted": 4352,
+        "gold": 5815,
+        "precision": 0.6596966911764706,
+        "recall": 0.4937231298366294,
+        "f1": 0.5647683682502213
+      },
+      "per_type": {
+        "bod": {
+          "correct": 858,
+          "predicted": 1285,
+          "gold": 1676,
+          "precision": 0.667704280155642,
+          "recall": 0.5119331742243437,
+          "f1": 0.5795339412360689
+        },
+        "dep": {
+          "correct": 16,
+          "predicted": 24,
+          "gold": 29,
+          "precision": 0.6666666666666666,
+          "recall": 0.5517241379310345,
+          "f1": 0.6037735849056604
+        },
+        "dis": {
+          "correct": 1019,
+          "predicted": 1521,
+          "gold": 1420,
+          "precision": 0.6699539776462854,
+          "recall": 0.717605633802817,
+          "f1": 0.6929615776946617
+        },
+        "dru": {
+          "correct": 287,
+          "predicted": 377,
+          "gold": 413,
+          "precision": 0.7612732095490716,
+          "recall": 0.6949152542372882,
+          "f1": 0.7265822784810126
+        },
+        "equ": {
+          "correct": 20,
+          "predicted": 33,
+          "gold": 80,
+          "precision": 0.6060606060606061,
+          "recall": 0.25,
+          "f1": 0.35398230088495575
+        },
+        "ite": {
+          "correct": 27,
+          "predicted": 64,
+          "gold": 227,
+          "precision": 0.421875,
+          "recall": 0.11894273127753303,
+          "f1": 0.18556701030927833
+        },
+        "mic": {
+          "correct": 87,
+          "predicted": 118,
+          "gold": 167,
+          "precision": 0.7372881355932204,
+          "recall": 0.5209580838323353,
+          "f1": 0.6105263157894737
+        },
+        "pro": {
+          "correct": 312,
+          "predicted": 493,
+          "gold": 645,
+          "precision": 0.6328600405679513,
+          "recall": 0.48372093023255813,
+          "f1": 0.5483304042179262
+        },
+        "sym": {
+          "correct": 245,
+          "predicted": 437,
+          "gold": 1158,
+          "precision": 0.5606407322654462,
+          "recall": 0.21157167530224524,
+          "f1": 0.3072100313479623
+        }
+      }
+    },
+    "optimizer_steps": 1860,
+    "amp_skipped_updates": 0
+  },
+  {
+    "epoch": 5,
+    "loss": 0.6174199763009621,
+    "validation": {
+      "documents": 1500,
+      "micro": {
+        "correct": 2782,
+        "predicted": 4140,
+        "gold": 5815,
+        "precision": 0.6719806763285024,
+        "recall": 0.4784178847807395,
+        "f1": 0.5589151180311401
+      },
+      "per_type": {
+        "bod": {
+          "correct": 805,
+          "predicted": 1185,
+          "gold": 1676,
+          "precision": 0.679324894514768,
+          "recall": 0.48031026252983294,
+          "f1": 0.5627403005941979
+        },
+        "dep": {
+          "correct": 17,
+          "predicted": 26,
+          "gold": 29,
+          "precision": 0.6538461538461539,
+          "recall": 0.5862068965517241,
+          "f1": 0.6181818181818182
+        },
+        "dis": {
+          "correct": 997,
+          "predicted": 1458,
+          "gold": 1420,
+          "precision": 0.6838134430727023,
+          "recall": 0.702112676056338,
+          "f1": 0.6928422515635857
+        },
+        "dru": {
+          "correct": 298,
+          "predicted": 401,
+          "gold": 413,
+          "precision": 0.743142144638404,
+          "recall": 0.7215496368038741,
+          "f1": 0.7321867321867321
+        },
+        "equ": {
+          "correct": 23,
+          "predicted": 38,
+          "gold": 80,
+          "precision": 0.6052631578947368,
+          "recall": 0.2875,
+          "f1": 0.38983050847457623
+        },
+        "ite": {
+          "correct": 24,
+          "predicted": 61,
+          "gold": 227,
+          "precision": 0.39344262295081966,
+          "recall": 0.10572687224669604,
+          "f1": 0.16666666666666669
+        },
+        "mic": {
+          "correct": 96,
+          "predicted": 134,
+          "gold": 167,
+          "precision": 0.7164179104477612,
+          "recall": 0.5748502994011976,
+          "f1": 0.6378737541528239
+        },
+        "pro": {
+          "correct": 318,
+          "predicted": 499,
+          "gold": 645,
+          "precision": 0.6372745490981964,
+          "recall": 0.4930232558139535,
+          "f1": 0.5559440559440559
+        },
+        "sym": {
+          "correct": 204,
+          "predicted": 338,
+          "gold": 1158,
+          "precision": 0.6035502958579881,
+          "recall": 0.17616580310880828,
+          "f1": 0.2727272727272727
+        }
+      }
+    },
+    "optimizer_steps": 2325,
+    "amp_skipped_updates": 0
+  },
+  {
+    "epoch": 6,
+    "loss": 0.6084796808978516,
+    "validation": {
+      "documents": 1500,
+      "micro": {
+        "correct": 2848,
+        "predicted": 4277,
+        "gold": 5815,
+        "precision": 0.6658873041851765,
+        "recall": 0.4897678417884781,
+        "f1": 0.5644074514466905
+      },
+      "per_type": {
+        "bod": {
+          "correct": 853,
+          "predicted": 1275,
+          "gold": 1676,
+          "precision": 0.6690196078431373,
+          "recall": 0.5089498806682577,
+          "f1": 0.5781091155540495
+        },
+        "dep": {
+          "correct": 17,
+          "predicted": 26,
+          "gold": 29,
+          "precision": 0.6538461538461539,
+          "recall": 0.5862068965517241,
+          "f1": 0.6181818181818182
+        },
+        "dis": {
+          "correct": 1005,
+          "predicted": 1483,
+          "gold": 1420,
+          "precision": 0.6776803776129467,
+          "recall": 0.7077464788732394,
+          "f1": 0.6923871856699966
+        },
+        "dru": {
+          "correct": 297,
+          "predicted": 394,
+          "gold": 413,
+          "precision": 0.7538071065989848,
+          "recall": 0.7191283292978208,
+          "f1": 0.7360594795539034
+        },
+        "equ": {
+          "correct": 24,
+          "predicted": 39,
+          "gold": 80,
+          "precision": 0.6153846153846154,
+          "recall": 0.3,
+          "f1": 0.40336134453781514
+        },
+        "ite": {
+          "correct": 29,
+          "predicted": 72,
+          "gold": 227,
+          "precision": 0.4027777777777778,
+          "recall": 0.1277533039647577,
+          "f1": 0.1939799331103679
+        },
+        "mic": {
+          "correct": 99,
+          "predicted": 140,
+          "gold": 167,
+          "precision": 0.7071428571428572,
+          "recall": 0.592814371257485,
+          "f1": 0.6449511400651465
+        },
+        "pro": {
+          "correct": 317,
+          "predicted": 496,
+          "gold": 645,
+          "precision": 0.6391129032258065,
+          "recall": 0.49147286821705427,
+          "f1": 0.5556529360210343
+        },
+        "sym": {
+          "correct": 207,
+          "predicted": 352,
+          "gold": 1158,
+          "precision": 0.5880681818181818,
+          "recall": 0.17875647668393782,
+          "f1": 0.27417218543046357
+        }
+      }
+    },
+    "optimizer_steps": 2790,
+    "amp_skipped_updates": 0
+  }
+]

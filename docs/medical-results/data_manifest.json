@@ -1,0 +1,70 @@
+{
+  "seed": 20261001,
+  "encoder": "BAAI/bge-small-zh-v1.5",
+  "max_length": 384,
+  "stride": 96,
+  "source_sha256": {
+    "53_schemas.json": "d642657dfecf7716bacb0de44afc3fc29ae4cc9428da7c95cd4e9c03e9a95642",
+    "CMeEE_dev.json": "bbe6be016bdb1a418362507024902b70587b951a884cf4a96a6d1246822cd07c",
+    "CMeEE_train.json": "984f0bea3932c8c5afd96d9cccac4895b87ec77f57bd3e825d832a17943cd5d3",
+    "CMeIE_dev.json": "3ae4dcf92a8741a16591537901860e7e54bc057447dd07712691401fa48b985a",
+    "CMeIE_train.json": "cfa38f1a74c7ad798485043cb11f9ba54a4fb4e013ae7771f0a3b8ab7809984d"
+  },
+  "source_provenance": {
+    "CMeEE_train": "GitHub Z-MU-Z/cmeee mirror, master at retrieval; local SHA recorded",
+    "CMeEE_dev": "HF Aunderline/CMeEE mirror, revision bea81a21dc077bb21f6df5a0385410f4768b97bd",
+    "CMeIE": "GitHub yehqi/RelationExtraction mirror, main at retrieval; local SHA recorded",
+    "original": "https://github.com/CBLUEbenchmark/CBLUE"
+  },
+  "limitations": [
+    "Public mirrors are not publisher-authenticated checksums; original licensing must be checked before redistribution.",
+    "Official unlabeled test is not scored; labeled official dev split into validation and heldout.",
+    "Corpora are medical text, not a gold set of literature PICO/outcomes/adverse events.",
+    "Exact normalized deduplication does not remove all near duplicates."
+  ],
+  "ner_counts": {
+    "train": {
+      "documents": 14830,
+      "entities": 60773
+    },
+    "validation": {
+      "documents": 1500,
+      "entities": 5815
+    },
+    "test": {
+      "documents": 3458,
+      "entities": 14171
+    }
+  },
+  "relation_counts": {
+    "train": {
+      "documents": 14288,
+      "triples": 43350
+    },
+    "validation": {
+      "documents": 1200,
+      "triples": 3503
+    },
+    "test": {
+      "documents": 2378,
+      "triples": 7062
+    }
+  },
+  "audit": {
+    "ner_dev_unaligned": 42,
+    "ner_train_unaligned": 125,
+    "ner_train_duplicate": 43,
+    "ner_train_invalid": 2,
+    "re_dev_实体边界不与 tokenizer 边界对齐": 7,
+    "re_train_实体边界不与 tokenizer 边界对齐": 47,
+    "re_train_duplicate": 4
+  },
+  "prepared_sha256": {
+    "ner-test.json": "aa44331b5bc2a9aae4dce3d3afc93f886b74154bcf5ba203b32dfdcea3deb12a",
+    "ner-train.json": "bccf3bf6ae9d1bb6e95f296b5f8d0de90d99975bb7ccfddf6dc4eb9eaf8e0d61",
+    "ner-validation.json": "cecc8293888dc8642e6556ea10a3ef90977259ae0e953b823a7c2e17eb5d1862",
+    "cmeie-384-v1\\test.jsonl": "5a04e6749d1ad4f31f7d660e72006d71f3f1ca352200dc7907e3d67d6f718ada",
+    "cmeie-384-v1\\train.jsonl": "123e592f126a78af789c8624fc5b103c83858f469747c8b1a21b076398b50966",
+    "cmeie-384-v1\\validation.jsonl": "31297fb200a41558a27fe5224a9acd994ba0c9c5a54d04d2e7e3dd4cb7a5f448"
+  }
+}

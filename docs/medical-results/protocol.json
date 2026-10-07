@@ -1,0 +1,69 @@
+{
+  "created_at": "2026-10-01T03:59:42.918103+00:00",
+  "source_hashes": {
+    "nlp_lab\\medical\\data.py": "365b2c75030912c4e2cde8ad53ee586c7f0d09f8562621ba7940e940892653d0",
+    "nlp_lab\\medical\\ner.py": "9bb5d4ed949460960fa29cbf6bf7f9eb71b6138cc301b54f9293364ac889abfc",
+    "scripts\\run_medical.py": "bfc0b99a3d024fc4b1cce659f1195313a9e220381d9c1dbf1d33b64e04190858",
+    "nlp_lab\\ie_context.py": "72d0a331c3cc0b371a00687f04359c4503144eba815db21daf63db917fa49d69",
+    "nlp_lab\\ie\\__init__.py": "cbc10f15b827d007890e87c7b3621fe976e71db65cd7577de84285c8488d86d2",
+    "nlp_lab\\ie\\cli.py": "3d1b7eb3a76649068a9fda66c96039c68f9885c9da2ce6fd4d5d347abc9709e0",
+    "nlp_lab\\ie\\data.py": "eaa855de5a3c86715097cd35da3f485f5ce672ea4b3b80d9c4d628f5f5110f4e",
+    "nlp_lab\\ie\\encoding.py": "5007647a11695b90704874113c133ec813a019e219d583b17202d831d0dbcba3",
+    "nlp_lab\\ie\\metrics.py": "e816b2ca990956f0011626737cb2c6069f5457a31e2b5f586ab83906a279eaf8",
+    "nlp_lab\\ie\\model.py": "8e61b0e0f34705aa4d43675c4703bc37433334f2f56a6dddfb887c0e0bb007f3",
+    "nlp_lab\\ie\\predict.py": "4a50a5c28e6a56b6c48cebc8ad9e31c8a75325e0464d96fe82ef7df6d9585298",
+    "nlp_lab\\ie\\suite.py": "9a952575d8d9cbe9860e99b85e0d8e7b5efce7a35162c4b9ca3eb1add8b7bd82",
+    "nlp_lab\\ie\\train.py": "297b84c4fe96bc6d9e058f21180c302441be9a3abcb1c16aabd9fcee77ef0cdd"
+  },
+  "data_manifest_sha256": "7fd32e1b921db581bac773250a8c7d2e44b525a069564d231755dd17cc90cf15",
+  "ner": {
+    "epochs": 6,
+    "seed": 42,
+    "checkpoint": "max validation micro exact typed-span F1",
+    "thresholds": [
+      0.0,
+      -0.5,
+      0.5
+    ],
+    "test": "official labeled dev minus first shuffled 1500 clean documents"
+  },
+  "relations": {
+    "config": {
+      "model": "BAAI/bge-small-zh-v1.5",
+      "architecture": "pipeline",
+      "seed": 42,
+      "epochs": 6,
+      "batch_size": 4,
+      "accumulation": 8,
+      "learning_rate": 3e-05,
+      "max_length": 384,
+      "freeze_encoder": false,
+      "use_tail": true,
+      "warmup_ratio": 0.06,
+      "mixed_precision": "fp16"
+    },
+    "features": "context_position",
+    "checkpoint": "max validation relation F1",
+    "thresholds": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -0.5,
+        -0.5
+      ],
+      [
+        0.5,
+        0.5
+      ]
+    ],
+    "test": "official labeled dev minus first shuffled 1200 clean documents"
+  },
+  "scope": "Medical NER / CMeIE relation scores only. PICO/outcome/adverse-event candidates are separate unvalidated rules.",
+  "limitations": [
+    "Single seed; no training-seed uncertainty estimate.",
+    "Public mirror provenance recorded; no official leaderboard comparison.",
+    "4-layer general Chinese encoder, not a medical pretrained encoder."
+  ]
+}

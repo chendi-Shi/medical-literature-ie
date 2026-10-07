@@ -1,0 +1,53 @@
+{
+  "documents": [
+    {
+      "document_id": "42959de4444c4e4d887dfa599fe370c5",
+      "title": "免疫单药与免疫联合化疗在75岁及以上晚期非小细胞肺癌患者中的疗效与安全性对比",
+      "characters": 21031,
+      "extraction_id": "d2cb07516d4943d599bab7934673a477",
+      "entities": 245,
+      "concepts": 75,
+      "relations": 6,
+      "candidate_records": 170,
+      "model_windows": 31,
+      "negative_efficacy_records": 9,
+      "all_offsets_and_references_valid": true,
+      "pipeline_source_sha256": {
+        "documents.py": "ba9f759806df769725d54770360cf09ff52e611b49b5b806a523bb55f31d39a1",
+        "evidence.py": "885f692b3fe1ffae11cfb34227647a9f36630ede703ba65f8a3672dd2738e323",
+        "pipeline.py": "735405a1331ba1014e3e44da79727547e3e052f459c3c64b61aa9a467f88ddce",
+        "ner.py": "9bb5d4ed949460960fa29cbf6bf7f9eb71b6138cc301b54f9293364ac889abfc"
+      }
+    },
+    {
+      "document_id": "d2330e0d97b14134afaf577d97533314",
+      "title": "驱动基因阴性非小细胞肺癌二线治疗中国专家共识",
+      "characters": 9737,
+      "extraction_id": "6b70d62fae7a4b2ea926e22c2fdaf19e",
+      "entities": 259,
+      "concepts": 104,
+      "relations": 8,
+      "candidate_records": 123,
+      "model_windows": 68,
+      "negative_efficacy_records": 6,
+      "all_offsets_and_references_valid": true,
+      "pipeline_source_sha256": {
+        "documents.py": "ba9f759806df769725d54770360cf09ff52e611b49b5b806a523bb55f31d39a1",
+        "evidence.py": "885f692b3fe1ffae11cfb34227647a9f36630ede703ba65f8a3672dd2738e323",
+        "pipeline.py": "735405a1331ba1014e3e44da79727547e3e052f459c3c64b61aa9a467f88ddce",
+        "ner.py": "9bb5d4ed949460960fa29cbf6bf7f9eb71b6138cc301b54f9293364ac889abfc"
+      }
+    }
+  ],
+  "search_verified": true,
+  "scope": "Functional checks on public papers; not independently expert-annotated extraction accuracy.",
+  "browser_review_export_check": {
+    "extraction_id": "d2cb07516d4943d599bab7934673a477",
+    "approved_records": 1,
+    "entity_corrected_with_original_preserved": true,
+    "record_and_entity_history_verified": true,
+    "download_sha256": "5c16ac9029aed070873e28ab259d61316da7d2049a5f73526476c621340ee37e",
+    "download_matches_source_and_reviewed_values": true,
+    "reviewer": "Codex 功能核验（非医学专家）"
+  }
+}

@@ -1,4 +1,34 @@
-# 中文信息抽取 NLP Lab · v0.3
+# 中文医学文献证据抽取 · v0.4
+
+主项目已转为医学文献处理：真实中文论文的 JATS XML / 文本 → 章节与表格行 → 医学实体与关系候选 → 研究对象、干预、疗效和不良事件证据 → 人工核验、实体归一、可追溯 JSON。打开 http://127.0.0.1:8778；历史通用抽取实验在 `/lab`。
+
+医学实体模型使用 **CMeEE 独立嵌套实体监督**，清洗后 14,830 条训练文本、60,773 个实体，1,500 条验证、3,458 条保留测试。医学关系模型使用 **CMeIE 53 类关系**，14,288 条训练文本、43,350 个三元组，1,200 条验证、2,378 条保留测试。这里不是 DuIE 模型换示例：两套医学模型均重新训练。每套 6 epochs，384 tokens，固定 seed42；4GB GPU 使用 FP16、batch4、累积8。医学实体支持重叠窗口和嵌套跨度，训练词典是独立 NER 基线。
+
+已导入两篇来自 PMC 的真实中文全文：[老年 NSCLC 疗效与安全性比较](https://pmc.ncbi.nlm.nih.gov/articles/PMC11534547/)（线性化 21,031 字符）与[二线治疗专家共识](https://pmc.ncbi.nlm.nih.gov/articles/PMC10918247/)（9,737 字符）。两篇 XML 均附 CC BY 3.0 声明，来源、声明和 SHA 保留在本机；不把这些论文当作医学模型的标注测试集。病例、背景研究和当前研究可能混在同一篇正文，章节证据必须一起阅读。
+
+工作台保存原文与不可覆盖的预测版本。每条候选带章节、XML 段落 / 表格位置、Unicode 字符偏移、原文统计量、否定 / 不确定 / 比较线索。数字可归一为比例、计数、年龄、时间、剂量、HR/OR/RR、P 值和置信区间；**组别与终点的绑定保留为空，等待核验**。支持逐提及修订实体类型、标准名和核验说明。每次人工核验记录修订号、核验人、修改字段与时间；并发修改产生冲突提示。默认导出已核验记录与其引用实体，以及单独核验过的实体；引用实体可能仍是模型候选，状态明确保留。全部候选另行导出。支持跨文献原文检索，包括中文短词。
+
+实体归一仅合并相同类型的原文表面词、原文显式缩写，以及带 provenance 的用户术语表。歧义别名保留多个候选，不自动合并；`local:` ID 是本地概念 ID，不是 MeSH / ICD。系统不自动推断药物因果关系，也不执行跨段共指或表格组别绑定。
+
+**实测 NER / RE 指标不代表疗效或不良事件抽取准确率。** 后两者目前是规则生成的待核验证据，缺少独立专家标注文献评测；文献业务仍需要这种评测才能称为经过业务验证的系统。单种子实验也不支持训练稳定性结论。具体结果见 `docs/MEDICAL_RESULTS.md`（实验完成后生成）。
+
+GitHub 研究借鉴：[CBLUE](https://github.com/CBLUEbenchmark/CBLUE) 提供中文医学基准；已阅读其 `cblue/models/model.py` 中主体 / 客体边界识别、实体起点拼接关系分类代码，以及数据处理模块。本项目增加独立嵌套 NER、实体及上下文池化，但没有按相同编码器和官方提交协议复现它，不能据此声称超过该基线。[LEADS](https://github.com/Keiji-AI/LEADS) 的 README 展示医学文献检索、筛选与抽取流程，标准部署要求至少 16GB 显存，当前 4GB 设备不满足；本项目采用本地小模型与可追溯核验流程，未复现其模型。[EvidenceOutcomes](https://github.com/ebmlab/EvidenceOutcomes) 的 README 展示临床结局专家标注任务；其英文摘要语料不等于中文文献评测，本项目没有将其分数或标签挪用到中文任务。后两项阅读范围是 README，未声称完整代码审计。
+
+复现医学训练与真实文档入口：
+
+```powershell
+python scripts/fetch_medical_data.py
+python scripts/run_medical.py
+python scripts/import_medical_papers.py
+python scripts/export_medical.py
+python -m nlp_lab.medical.cli list
+python -m nlp_lab.medical.cli ingest your-paper.xml --format jats --source "https://publisher.example/paper"
+python -m nlp_lab.medical.cli extract DOCUMENT_ID
+```
+
+下载脚本使用公开镜像并检查本机核验过的文件 SHA；这些不是官方签名。用于再分发前须核对原数据协议。数据清洗、训练、推理均在本机执行，无付费模型接口；预训练编码器需先可用，本机已缓存 `BAAI/bge-small-zh-v1.5`。模型、原始语料与 SQLite 不进入 Git。医学协议与通用实验分开保存，原通用实验源代码及指纹保持原样。
+
+## 历史通用中文信息抽取 · v0.3
 
 从中文原文识别实体、关系，并输出带原文位置的结构化 JSON。使用真实 DuIE2 数据、中文预训练编码器微调、NER → 实体对关系分类对照，以及带类型跨度的 GPLinker 联合抽取。包括数据清洗、独立训练、推理、完整测试、逐槽位错误、两种子统计、消融和前缀压力评测。
 
