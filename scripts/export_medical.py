@@ -31,6 +31,9 @@ def main():
                         (ner/'history.json','ner_history.json'),(re/'history.json','relation_history.json')]:
         shutil.copyfile(source,destination/name)
     if (root/'service_check.json').exists():shutil.copyfile(root/'service_check.json',destination/'service_check.json')
+    for name in ('protocol','selection','report'):
+        source=root/'decoding-v2'/f'{name}.json'
+        if source.exists():shutil.copyfile(source,destination/f'decoding_{name}.json')
     n=report['ner']['micro'];b=report['ner_dictionary_baseline']['micro'];r=report['relations']['relation']
     types='\n'.join(f"- {typ}：F1 {m['f1']*100:.2f}%，gold {m['gold']}。" for typ,m in report['ner']['per_type'].items())
     text=f'''# 医学文献抽取：实际结果与边界
@@ -65,6 +68,10 @@ def main():
 ## v0.5 功能验证
 
 新增 28 个手工编写的终点数值 / 放弃绑定回归样例，包括单位冲突、未达到终点、多组歧义、CI、明确组别、并列共享单位和不良事件发生率；这些用例不是医学专家标注测试集。真实全文的候选数量、原文偏移及引用检查见 `medical-results/service_check.json`。模型、训练协议和保留集分数不因这次规则更新而变化。
+
+## v0.6 GitHub 源码落实与未采用实验
+
+根据固定 commit 阅读 GlobalPointer、GLiNER、medspaCy 和 Trialstreamer 关键代码，新增实体级修饰作用域和研究来源混合提示。原模型 / 原解码器仍为默认；阈值与嵌套策略对照的验证集提升没有在复用保留集上重现，详见 `GITHUB_RESEARCH_UPGRADE.md` 和 `medical-results/decoding_report.json`。修饰线索为中文规则候选，尚无医学专家标注业务测试集。
 
 ## 项目表述
 

@@ -1,0 +1,335 @@
+{
+  "protocol_sha256": "1bf0a1f571a9bc885f101869d57c58361aa3e0e66f6ab11b8d40eee9c32df52d",
+  "selection_sha256": "f576b6962b7831ba06533a16d2940c1515ca7b1a93f6a5d7207941871d525380",
+  "baseline": {
+    "documents": 3458,
+    "micro": {
+      "correct": 8330,
+      "predicted": 14249,
+      "gold": 14171,
+      "precision": 0.5846024282405783,
+      "recall": 0.5878201961752876,
+      "f1": 0.5862068965517242
+    },
+    "per_type": {
+      "bod": {
+        "correct": 2616,
+        "predicted": 4542,
+        "gold": 4112,
+        "precision": 0.5759577278731837,
+        "recall": 0.6361867704280155,
+        "f1": 0.6045759186503351
+      },
+      "dep": {
+        "correct": 41,
+        "predicted": 71,
+        "gold": 79,
+        "precision": 0.5774647887323944,
+        "recall": 0.5189873417721519,
+        "f1": 0.5466666666666666
+      },
+      "dis": {
+        "correct": 2703,
+        "predicted": 4463,
+        "gold": 3466,
+        "precision": 0.6056464261707372,
+        "recall": 0.7798615118291979,
+        "f1": 0.6818009837306092
+      },
+      "dru": {
+        "correct": 746,
+        "predicted": 1042,
+        "gold": 963,
+        "precision": 0.7159309021113244,
+        "recall": 0.77466251298027,
+        "f1": 0.744139650872818
+      },
+      "equ": {
+        "correct": 55,
+        "predicted": 89,
+        "gold": 157,
+        "precision": 0.6179775280898876,
+        "recall": 0.3503184713375796,
+        "f1": 0.44715447154471544
+      },
+      "ite": {
+        "correct": 136,
+        "predicted": 283,
+        "gold": 651,
+        "precision": 0.48056537102473496,
+        "recall": 0.20890937019969277,
+        "f1": 0.291220556745182
+      },
+      "mic": {
+        "correct": 275,
+        "predicted": 373,
+        "gold": 410,
+        "precision": 0.7372654155495979,
+        "recall": 0.6707317073170732,
+        "f1": 0.7024265644955301
+      },
+      "pro": {
+        "correct": 777,
+        "predicted": 1470,
+        "gold": 1396,
+        "precision": 0.5285714285714286,
+        "recall": 0.5565902578796562,
+        "f1": 0.5422191207257502
+      },
+      "sym": {
+        "correct": 981,
+        "predicted": 1916,
+        "gold": 2937,
+        "precision": 0.5120041753653445,
+        "recall": 0.33401430030643514,
+        "f1": 0.40428600865444053
+      }
+    }
+  },
+  "selected": {
+    "documents": 3458,
+    "micro": {
+      "correct": 8381,
+      "predicted": 14496,
+      "gold": 14171,
+      "precision": 0.5781594922737306,
+      "recall": 0.5914190953355444,
+      "f1": 0.5847141312310322
+    },
+    "per_type": {
+      "bod": {
+        "correct": 2798,
+        "predicted": 5216,
+        "gold": 4112,
+        "precision": 0.5364263803680982,
+        "recall": 0.6804474708171206,
+        "f1": 0.5999142367066895
+      },
+      "dep": {
+        "correct": 41,
+        "predicted": 71,
+        "gold": 79,
+        "precision": 0.5774647887323944,
+        "recall": 0.5189873417721519,
+        "f1": 0.5466666666666666
+      },
+      "dis": {
+        "correct": 2589,
+        "predicted": 4091,
+        "gold": 3466,
+        "precision": 0.6328526032754828,
+        "recall": 0.7469705712637046,
+        "f1": 0.6851925367209211
+      },
+      "dru": {
+        "correct": 717,
+        "predicted": 956,
+        "gold": 963,
+        "precision": 0.75,
+        "recall": 0.7445482866043613,
+        "f1": 0.7472642001042209
+      },
+      "equ": {
+        "correct": 63,
+        "predicted": 109,
+        "gold": 157,
+        "precision": 0.5779816513761468,
+        "recall": 0.4012738853503185,
+        "f1": 0.4736842105263158
+      },
+      "ite": {
+        "correct": 111,
+        "predicted": 227,
+        "gold": 651,
+        "precision": 0.4889867841409692,
+        "recall": 0.17050691244239632,
+        "f1": 0.2528473804100228
+      },
+      "mic": {
+        "correct": 305,
+        "predicted": 455,
+        "gold": 410,
+        "precision": 0.6703296703296703,
+        "recall": 0.7439024390243902,
+        "f1": 0.7052023121387282
+      },
+      "pro": {
+        "correct": 776,
+        "predicted": 1465,
+        "gold": 1396,
+        "precision": 0.5296928327645051,
+        "recall": 0.5558739255014327,
+        "f1": 0.5424676686473261
+      },
+      "sym": {
+        "correct": 981,
+        "predicted": 1906,
+        "gold": 2937,
+        "precision": 0.5146904512067156,
+        "recall": 0.33401430030643514,
+        "f1": 0.4051207928969647
+      }
+    }
+  },
+  "selection": {
+    "chosen": {
+      "strategy": "validation_per_type",
+      "thresholds": {
+        "bod": -0.75,
+        "dep": -0.5,
+        "dis": -0.25,
+        "dru": -0.25,
+        "equ": -0.75,
+        "ite": -0.25,
+        "mic": -1.0,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "nested",
+      "validation_f1": 0.5894915254237288
+    },
+    "deployment": {
+      "strategy": "validation_per_type",
+      "thresholds": {
+        "bod": -0.75,
+        "dep": -0.5,
+        "dis": -0.25,
+        "dru": -0.25,
+        "equ": -0.75,
+        "ite": -0.25,
+        "mic": -1.0,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "nested",
+      "validation_f1": 0.5894915254237288
+    },
+    "promoted": true,
+    "supports": {
+      "bod": 1676,
+      "dep": 29,
+      "dis": 1420,
+      "dru": 413,
+      "equ": 80,
+      "ite": 227,
+      "mic": 167,
+      "pro": 645,
+      "sym": 1158
+    },
+    "options": [
+      {
+        "strategy": "original_global",
+        "thresholds": {
+          "bod": -0.5,
+          "dep": -0.5,
+          "dis": -0.5,
+          "dru": -0.5,
+          "equ": -0.5,
+          "ite": -0.5,
+          "mic": -0.5,
+          "pro": -0.5,
+          "sym": -0.5
+        },
+        "policy": "raw",
+        "validation_f1": 0.5861626614213632
+      },
+      {
+        "strategy": "original_global",
+        "thresholds": {
+          "bod": -0.5,
+          "dep": -0.5,
+          "dis": -0.5,
+          "dru": -0.5,
+          "equ": -0.5,
+          "ite": -0.5,
+          "mic": -0.5,
+          "pro": -0.5,
+          "sym": -0.5
+        },
+        "policy": "nested",
+        "validation_f1": 0.5863130881094953
+      },
+      {
+        "strategy": "validation_global",
+        "thresholds": {
+          "bod": -0.5,
+          "dep": -0.5,
+          "dis": -0.5,
+          "dru": -0.5,
+          "equ": -0.5,
+          "ite": -0.5,
+          "mic": -0.5,
+          "pro": -0.5,
+          "sym": -0.5
+        },
+        "policy": "raw",
+        "validation_f1": 0.5861626614213632
+      },
+      {
+        "strategy": "validation_global",
+        "thresholds": {
+          "bod": -0.5,
+          "dep": -0.5,
+          "dis": -0.5,
+          "dru": -0.5,
+          "equ": -0.5,
+          "ite": -0.5,
+          "mic": -0.5,
+          "pro": -0.5,
+          "sym": -0.5
+        },
+        "policy": "nested",
+        "validation_f1": 0.5863130881094953
+      },
+      {
+        "strategy": "validation_per_type",
+        "thresholds": {
+          "bod": -0.75,
+          "dep": -0.5,
+          "dis": -0.25,
+          "dru": -0.25,
+          "equ": -0.75,
+          "ite": -0.25,
+          "mic": -1.0,
+          "pro": -0.5,
+          "sym": -0.5
+        },
+        "policy": "raw",
+        "validation_f1": 0.5892917655032193
+      },
+      {
+        "strategy": "validation_per_type",
+        "thresholds": {
+          "bod": -0.75,
+          "dep": -0.5,
+          "dis": -0.25,
+          "dru": -0.25,
+          "equ": -0.75,
+          "ite": -0.25,
+          "mic": -1.0,
+          "pro": -0.5,
+          "sym": -0.5
+        },
+        "policy": "nested",
+        "validation_f1": 0.5894915254237288
+      }
+    ],
+    "selected_at": "2026-10-07T03:31:59.564733+00:00"
+  },
+  "test_opened_at": "2026-10-07T03:31:59.566368+00:00",
+  "test_delta_f1": -0.00149276532069198,
+  "paired_document_bootstrap_95_ci": [
+    -0.0036364708527727163,
+    0.000977391835779011
+  ],
+  "seconds": 11.942280599963851,
+  "device": "cuda",
+  "finished_at": "2026-10-07T03:32:06.279046+00:00",
+  "weights_sha256": "3bf30a5e19c05b968bf79609dc02679705d9ffef58b2b4343f08d880fcea313c",
+  "limitations": [
+    "Reuses previously reported holdout; secondary comparison, not a pristine independently unseen final test.",
+    "Post-training decision comparison, not a new encoder or confidence probability calibration.",
+    "Single checkpoint/seed; bootstrap reflects document sampling, not training-seed variation.",
+    "Performance measured on CMeEE, not full-document clinical outcome extraction."
+  ]
+}

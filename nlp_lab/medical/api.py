@@ -59,7 +59,9 @@ def router(workspace):
     @routes.get('')
     def overview():
         return {'status':read_json(root/'status.json') if (root/'status.json').exists() else {'phase':'not_trained'},
-                'report':read_json(root/'report.json') if (root/'report.json').exists() else None,'documents':store.documents()}
+                'report':read_json(root/'report.json') if (root/'report.json').exists() else None,'documents':store.documents(),
+                'decoding_experiment':read_json(root/'decoding-v2/report.json') if (root/'decoding-v2/report.json').exists() else None,
+                'decoder_policy':read_json(root/'decoder_policy.json') if (root/'decoder_policy.json').exists() else {'enabled':False}}
     @routes.post('/documents',status_code=201)
     def ingest(body:DocumentRequest):
         try:return store.add_document(parse_document(body.content,body.format,body.title,body.source))

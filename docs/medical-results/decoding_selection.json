@@ -1,0 +1,145 @@
+{
+  "chosen": {
+    "strategy": "validation_per_type",
+    "thresholds": {
+      "bod": -0.75,
+      "dep": -0.5,
+      "dis": -0.25,
+      "dru": -0.25,
+      "equ": -0.75,
+      "ite": -0.25,
+      "mic": -1.0,
+      "pro": -0.5,
+      "sym": -0.5
+    },
+    "policy": "nested",
+    "validation_f1": 0.5894915254237288
+  },
+  "deployment": {
+    "strategy": "validation_per_type",
+    "thresholds": {
+      "bod": -0.75,
+      "dep": -0.5,
+      "dis": -0.25,
+      "dru": -0.25,
+      "equ": -0.75,
+      "ite": -0.25,
+      "mic": -1.0,
+      "pro": -0.5,
+      "sym": -0.5
+    },
+    "policy": "nested",
+    "validation_f1": 0.5894915254237288
+  },
+  "promoted": true,
+  "supports": {
+    "bod": 1676,
+    "dep": 29,
+    "dis": 1420,
+    "dru": 413,
+    "equ": 80,
+    "ite": 227,
+    "mic": 167,
+    "pro": 645,
+    "sym": 1158
+  },
+  "options": [
+    {
+      "strategy": "original_global",
+      "thresholds": {
+        "bod": -0.5,
+        "dep": -0.5,
+        "dis": -0.5,
+        "dru": -0.5,
+        "equ": -0.5,
+        "ite": -0.5,
+        "mic": -0.5,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "raw",
+      "validation_f1": 0.5861626614213632
+    },
+    {
+      "strategy": "original_global",
+      "thresholds": {
+        "bod": -0.5,
+        "dep": -0.5,
+        "dis": -0.5,
+        "dru": -0.5,
+        "equ": -0.5,
+        "ite": -0.5,
+        "mic": -0.5,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "nested",
+      "validation_f1": 0.5863130881094953
+    },
+    {
+      "strategy": "validation_global",
+      "thresholds": {
+        "bod": -0.5,
+        "dep": -0.5,
+        "dis": -0.5,
+        "dru": -0.5,
+        "equ": -0.5,
+        "ite": -0.5,
+        "mic": -0.5,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "raw",
+      "validation_f1": 0.5861626614213632
+    },
+    {
+      "strategy": "validation_global",
+      "thresholds": {
+        "bod": -0.5,
+        "dep": -0.5,
+        "dis": -0.5,
+        "dru": -0.5,
+        "equ": -0.5,
+        "ite": -0.5,
+        "mic": -0.5,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "nested",
+      "validation_f1": 0.5863130881094953
+    },
+    {
+      "strategy": "validation_per_type",
+      "thresholds": {
+        "bod": -0.75,
+        "dep": -0.5,
+        "dis": -0.25,
+        "dru": -0.25,
+        "equ": -0.75,
+        "ite": -0.25,
+        "mic": -1.0,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "raw",
+      "validation_f1": 0.5892917655032193
+    },
+    {
+      "strategy": "validation_per_type",
+      "thresholds": {
+        "bod": -0.75,
+        "dep": -0.5,
+        "dis": -0.25,
+        "dru": -0.25,
+        "equ": -0.75,
+        "ite": -0.25,
+        "mic": -1.0,
+        "pro": -0.5,
+        "sym": -0.5
+      },
+      "policy": "nested",
+      "validation_f1": 0.5894915254237288
+    }
+  ],
+  "selected_at": "2026-10-07T03:31:59.564733+00:00"
+}

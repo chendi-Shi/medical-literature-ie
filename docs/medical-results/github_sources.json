@@ -1,0 +1,62 @@
+{
+  "reviewed_at": "2026-10-07",
+  "scope": "Pinned source review, not reproduction of upstream models or benchmark scores.",
+  "files": [
+    {
+      "repo": "bojone/GlobalPointer",
+      "commit": "1e66ba360b3cbf6f785d2d93a1c0caa880932824",
+      "path": "CMeEE_GlobalPointer.py",
+      "blob_sha": "5df8a42e9dc8254fd528caecd4cab54345884a21",
+      "url": "https://github.com/bojone/GlobalPointer/blob/1e66ba360b3cbf6f785d2d93a1c0caa880932824/CMeEE_GlobalPointer.py"
+    },
+    {
+      "repo": "bojone/GlobalPointer",
+      "commit": "1e66ba360b3cbf6f785d2d93a1c0caa880932824",
+      "path": "README.md",
+      "blob_sha": "d173781fd160477e85dfe4135aae3c788cb29f6f",
+      "url": "https://github.com/bojone/GlobalPointer/blob/1e66ba360b3cbf6f785d2d93a1c0caa880932824/README.md"
+    },
+    {
+      "repo": "medspacy/medspacy",
+      "commit": "b7bb7d82f2e8fbadc9ab26d6b4c37578f8883c2c",
+      "path": "medspacy/context/context_modifier.py",
+      "blob_sha": "191724a096a2c91c19d90340e5b03334e7489ddd",
+      "url": "https://github.com/medspacy/medspacy/blob/b7bb7d82f2e8fbadc9ab26d6b4c37578f8883c2c/medspacy/context/context_modifier.py"
+    },
+    {
+      "repo": "medspacy/medspacy",
+      "commit": "b7bb7d82f2e8fbadc9ab26d6b4c37578f8883c2c",
+      "path": "medspacy/context/context_rule.py",
+      "blob_sha": "0fb0c05fdec328c75d05be3989758d58b3c3d685",
+      "url": "https://github.com/medspacy/medspacy/blob/b7bb7d82f2e8fbadc9ab26d6b4c37578f8883c2c/medspacy/context/context_rule.py"
+    },
+    {
+      "repo": "medspacy/medspacy",
+      "commit": "b7bb7d82f2e8fbadc9ab26d6b4c37578f8883c2c",
+      "path": "README.md",
+      "blob_sha": "4e26ee7db22543b95efb95042013ba28a083ca3c",
+      "url": "https://github.com/medspacy/medspacy/blob/b7bb7d82f2e8fbadc9ab26d6b4c37578f8883c2c/README.md"
+    },
+    {
+      "repo": "ijmarshall/trialstreamer",
+      "commit": "a97cb8332c039e228ef42188c9d966440894e354",
+      "path": "trialstreamer/PICO_BERT.py",
+      "blob_sha": "29aad38ae1a9d9fefcb786cd2e94b19e7990eb67",
+      "url": "https://github.com/ijmarshall/trialstreamer/blob/a97cb8332c039e228ef42188c9d966440894e354/trialstreamer/PICO_BERT.py"
+    },
+    {
+      "repo": "ijmarshall/trialstreamer",
+      "commit": "a97cb8332c039e228ef42188c9d966440894e354",
+      "path": "README.md",
+      "blob_sha": "95406c54c56ff48286301de08b8486b9df75465d",
+      "url": "https://github.com/ijmarshall/trialstreamer/blob/a97cb8332c039e228ef42188c9d966440894e354/README.md"
+    },
+    {
+      "repo": "urchade/GLiNER",
+      "commit": "f3c945702b9b5cde381c27b95310c47909bcfd80",
+      "path": "gliner/decoding/decoder.py",
+      "blob_sha": "2345dce774773699caec53e13f918b8fa22ee687",
+      "url": "https://github.com/urchade/GLiNER/blob/f3c945702b9b5cde381c27b95310c47909bcfd80/gliner/decoding/decoder.py"
+    }
+  ]
+}

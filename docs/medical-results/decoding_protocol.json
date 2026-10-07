@@ -1,0 +1,52 @@
+{
+  "created_at": "2026-10-07T03:31:52.727019+00:00",
+  "weights_sha256": "3bf30a5e19c05b968bf79609dc02679705d9ffef58b2b4343f08d880fcea313c",
+  "prepared_sha256": {
+    "ner-test.json": "aa44331b5bc2a9aae4dce3d3afc93f886b74154bcf5ba203b32dfdcea3deb12a",
+    "ner-train.json": "bccf3bf6ae9d1bb6e95f296b5f8d0de90d99975bb7ccfddf6dc4eb9eaf8e0d61",
+    "ner-validation.json": "cecc8293888dc8642e6556ea10a3ef90977259ae0e953b823a7c2e17eb5d1862"
+  },
+  "source_sha256": {
+    "nlp_lab/medical/decoding.py": "a9662ada3ae34036709c2b9ef183b6dba17e09c10bb54f2f9f9e491777ed582b",
+    "scripts/improve_medical_decoding.py": "0b4287894ff244c6449b627381e430879b57dc6bf96cdab5728e941e98aa0326"
+  },
+  "grid": [
+    -2.0,
+    -1.75,
+    -1.5,
+    -1.25,
+    -1.0,
+    -0.75,
+    -0.5,
+    -0.25,
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+    2.0
+  ],
+  "baseline_threshold": -0.5,
+  "min_validation_type_support": 50,
+  "policies": [
+    "raw",
+    "nested"
+  ],
+  "strategies": [
+    "original_global",
+    "validation_global",
+    "validation_per_type"
+  ],
+  "selection": "max validation micro exact typed-span F1; ties prefer original then raw",
+  "promotion_min_validation_gain": 0.003,
+  "bootstrap": {
+    "unit": "document",
+    "samples": 1000,
+    "seed": 20261007
+  },
+  "scope": "Post-training decision comparison, not a new encoder or confidence probability calibration.",
+  "test_scope": "Reuses previously reported holdout; secondary comparison, not a pristine independently unseen final test."
+}

@@ -78,6 +78,7 @@ def normalize(entities,text,glossary=()):
 
 def candidates(document,entities):
     from .bindings import suggestions
+    from .context import provenance_context
     records=[]
     for sentence in sentences(document):
         text=sentence['text']
@@ -96,6 +97,7 @@ def candidates(document,entities):
             records.append({'id':f'r{len(records)}','category':category,'evidence':sentence,'mentions':mentions,
                             'numbers':numbers,'qualifiers':qualifiers,'status':'pending',
                             'binding_suggestions':bindings,'binding_abstentions':abstentions,
+                            'provenance_context':provenance_context(sentence),
                             'method':'evidence_rules_v1','arm':None,'endpoint':None,'normalized_value':None,
                             'reason':'Group, endpoint and value binding require review; candidate evidence is not a verified medical conclusion.'})
     return records

@@ -110,7 +110,9 @@ class Store:
             for key in ('numbers','qualifiers','binding_suggestions','binding_abstentions'):
                 correction[key]=matched[key] if matched else ({name:[] for name in QUALIFIERS} if key=='qualifiers' else [])
             correction['mentions']=[e['id'] for e in extraction.get('entities',[]) if a<=e['start']<e['end']<=b]
-        fields=('arm','endpoint','normalized_value','note','evidence','numbers','qualifiers','mentions','binding_suggestions','binding_abstentions')
+            from .context import provenance_context
+            correction['provenance_context']=provenance_context(correction['evidence'])
+        fields=('arm','endpoint','normalized_value','note','evidence','numbers','qualifiers','mentions','binding_suggestions','binding_abstentions','provenance_context')
         correction={**{k:records[record_id].get(k) for k in fields if k in records[record_id]},**correction}
         # Acquire write transaction before checking current revision: concurrent reviewers cannot silently overwrite.
         with self.connect() as db:
@@ -134,6 +136,10 @@ class Store:
         extraction=self.extraction(identifier);entities={e['id']:e for e in extraction.get('entities',[])}
         if entity_id not in entities:raise KeyError('Entity not found')
         correction={'type':type_,'canonical':canonical.strip(),'note':note,'normalization':'human_review'}
+        from .context import annotate_entities
+        reviewed={**entities[entity_id],'type':type_,'canonical':canonical.strip()}
+        annotate_entities(self.document(extraction['document_id']),[reviewed])
+        correction['context']=reviewed['context']
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             row=db.execute('SELECT MAX(revision) AS revision FROM reviews WHERE extraction_id=? AND record_id=?',(identifier,entity_id)).fetchone()
