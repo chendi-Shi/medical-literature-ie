@@ -71,9 +71,9 @@ class LiteratureExtractor:
         records=candidates({**document,'blocks':[b for b in document['blocks'] if b['id'] not in skipped or b['kind']=='table_row']},entities)
         return {'document_sha256':document['sha256'],'entities':entities,'concepts':concepts,'alias_definitions':definitions,
                 'relations':result,'records':records,'models':self.fingerprints,'model_windows':len(tasks),
-                'pipeline_source_sha256':{name:digest(Path(__file__).parent/name) for name in ('documents.py','evidence.py','pipeline.py','ner.py')},
+                'pipeline_source_sha256':{name:digest(Path(__file__).parent/name) for name in ('documents.py','evidence.py','bindings.py','pipeline.py','ner.py')},
                 'skipped_non_chinese_blocks':skipped,'limitations':['CMeIE relation candidates are not drug causality or verified efficacy.',
                     'PICO/outcome/adverse-event evidence candidates use disclosed rules, pending human verification.',
-                    'No automatic cross-block coreference or trial-arm/value binding; preserve the evidence sentence.',
+                    'Literal same-clause endpoint/value/arm suggestions remain pending; no cross-block coreference or clinical inference.',
                     'Local exact/explicit-alias concept IDs are not MeSH, ICD or externally validated identifiers.',
                     'Scores are uncalibrated logits; evaluation covers medical corpora, not this full literature workflow.']}

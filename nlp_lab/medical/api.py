@@ -13,6 +13,7 @@ from ..data import read_json,save_json
 from ..training import now
 from .documents import parse_document
 from .store import Store,Conflict
+from .exporting import export_payload
 
 
 class DocumentRequest(BaseModel):
@@ -114,16 +115,7 @@ def router(workspace):
         except ValueError as e:raise HTTPException(400,str(e)) from e
     @routes.get('/extractions/{identifier}/export')
     def export(identifier:str,mode:Literal['approved','all']='approved'):
-        payload=extract(identifier);document=doc(payload['document_id'])
-        if mode=='approved':
-            payload['records']=[r for r in payload['records'] if r['status']=='approved']
-            allowed={x for r in payload['records'] for x in r['mentions']}
-            allowed.update(e['id'] for e in payload['entities'] if e['status']=='approved')
-            payload['entities']=[e for e in payload['entities'] if e['id'] in allowed]
-            payload['concepts']=[c for c in payload['concepts'] if any(m in allowed for m in c['mentions'])]
-            payload['relations']=[]
-        payload.update(export_mode=mode,source_metadata=document['metadata'],offset_reference='linearized document text',
-                       source_text=document['text'],exported_at=now())
+        extract(identifier);payload=export_payload(store,identifier,mode)
         return JSONResponse(payload,headers={'Content-Disposition':f'attachment; filename="medical-evidence-{mode}.json"','Cache-Control':'no-store'})
     @routes.get('/search')
     def search(q:str):

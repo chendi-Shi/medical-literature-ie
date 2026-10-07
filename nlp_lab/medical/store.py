@@ -102,7 +102,16 @@ class Store:
             block=next((x for x in document['blocks'] if x['start']<=a<b<=x['end']),None)
             if not block:raise ValueError('Reviewed evidence must lie within one source block')
             correction['evidence']={**records[record_id]['evidence'],**evidence,'block':block['id'],'section':block['section'],'locator':block['locator']}
-        correction={**{k:records[record_id].get(k) for k in ('arm','endpoint','normalized_value','note','evidence')},**correction}
+            # Review may narrow an evidence span. Never keep numbers or entities
+            # from outside that new span, or bindings referring to old evidence.
+            from .evidence import candidates,QUALIFIERS
+            revised=candidates({**document,'blocks':[{**block,'start':a,'end':b,'text':evidence['text']}]},extraction.get('entities',[]))
+            matched=next((r for r in revised if r['category']==records[record_id]['category']),None)
+            for key in ('numbers','qualifiers','binding_suggestions','binding_abstentions'):
+                correction[key]=matched[key] if matched else ({name:[] for name in QUALIFIERS} if key=='qualifiers' else [])
+            correction['mentions']=[e['id'] for e in extraction.get('entities',[]) if a<=e['start']<e['end']<=b]
+        fields=('arm','endpoint','normalized_value','note','evidence','numbers','qualifiers','mentions','binding_suggestions','binding_abstentions')
+        correction={**{k:records[record_id].get(k) for k in fields if k in records[record_id]},**correction}
         # Acquire write transaction before checking current revision: concurrent reviewers cannot silently overwrite.
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
@@ -110,6 +119,8 @@ class Store:
             current=row['revision'] or 0
             if current!=expected_revision:raise Conflict(f'Review revision changed: expected {expected_revision}, current {current}')
             db.execute('INSERT INTO reviews VALUES(?,?,?,?,?,?,?)',(identifier,record_id,current+1,status,json.dumps(correction,ensure_ascii=False),reviewer,now()))
+            if 'evidence' in correction:
+                db.execute('UPDATE evidence_search SET text=? WHERE extraction_id=? AND record_id=?',(correction['evidence']['text'],identifier,record_id))
         return self.extraction(identifier)
 
     def history(self,identifier,record_id):

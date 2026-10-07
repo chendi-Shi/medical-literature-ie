@@ -5,6 +5,7 @@ import json
 
 from .documents import parse_document
 from .store import Store
+from .exporting import export_payload
 
 
 def main():
@@ -33,13 +34,7 @@ def main():
         result=store.review(args.extraction_id,args.record_id,args.revision,args.status,args.reviewer,correction)
     elif args.command=='search':result=store.search(args.query)
     else:
-        result=store.extraction(args.extraction_id);document=store.document(result['document_id'])
-        if not args.all_candidates:
-            result['records']=[r for r in result['records'] if r['status']=='approved'];allowed={i for r in result['records'] for i in r['mentions']}
-            allowed.update(e['id'] for e in result['entities'] if e['status']=='approved')
-            result['entities']=[e for e in result['entities'] if e['id'] in allowed]
-            result['concepts']=[c for c in result['concepts'] if any(i in allowed for i in c['mentions'])];result['relations']=[]
-        result.update(source_metadata=document['metadata'],source_text=document['text'],export_mode='all' if args.all_candidates else 'approved')
+        result=export_payload(store,args.extraction_id,'all' if args.all_candidates else 'approved')
         args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
         print(args.output.resolve());return
     print(json.dumps(result,ensure_ascii=False,indent=2))
