@@ -1,11 +1,17 @@
 import torch
-from transformers import BertConfig,BertModel,AutoTokenizer
-from nlp_lab.ie.data import MODEL
+import pytest
+from transformers import BertConfig,BertModel,BertTokenizerFast
 from nlp_lab.medical.ner import MedicalNER,examples,collate,scores
 
 
-def test_nested_medical_supervision_gradients_and_offset_metrics():
-    tokenizer=AutoTokenizer.from_pretrained(MODEL,local_files_only=True)
+@pytest.fixture
+def tokenizer(tmp_path):
+    vocab=tmp_path/'vocab.txt'
+    vocab.write_text('[PAD]\n[UNK]\n[CLS]\n[SEP]\n[MASK]\n肺\n癌\n患\n者\n咳\n嗽\n。\n',encoding='utf-8')
+    return BertTokenizerFast(vocab=str(vocab))
+
+
+def test_nested_medical_supervision_gradients_and_offset_metrics(tokenizer):
     row={'id':'nested','text':'😀肺癌患者咳嗽。','entities':[(1,3,'dis'),(1,5,'sym'),(5,7,'sym')]}
     batch=examples([row],tokenizer);inputs,mask,target=collate(batch)
     assert target.sum()==3
@@ -20,8 +26,7 @@ def test_nested_medical_supervision_gradients_and_offset_metrics():
     assert metric['micro']['f1']==0
 
 
-def test_long_document_windows_preserve_nested_span_coverage():
-    tokenizer=AutoTokenizer.from_pretrained(MODEL,local_files_only=True)
+def test_long_document_windows_preserve_nested_span_coverage(tokenizer):
     text='患者。'*200+'肺癌。'+'患者。'*200
     a=text.index('肺癌');row={'id':'long','text':text,'entities':[(a,a+2,'dis')]}
     encoded=examples([row],tokenizer)
