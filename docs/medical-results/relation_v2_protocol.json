@@ -1,0 +1,80 @@
+{
+  "created_at": "2026-10-07T04:27:41.155182+00:00",
+  "config": {
+    "model": "BAAI/bge-small-zh-v1.5",
+    "architecture": "joint",
+    "seed": 42,
+    "epochs": 6,
+    "batch_size": 2,
+    "accumulation": 16,
+    "learning_rate": 3e-05,
+    "max_length": 384,
+    "freeze_encoder": false,
+    "use_tail": true,
+    "warmup_ratio": 0.06,
+    "mixed_precision": "fp16"
+  },
+  "run": "workspace\\ie\\runs\\20261007-042741-95efdc8b",
+  "baseline_weights_sha256": "1f694ee4317f34b79dfb9fdb9a48595eba879af83b3415b471708f008d9ac3e0",
+  "dataset_sha256": "c18ed6f2bd605210885fef4950dbadd7c4ef8024eea711102a6bd6fda7ca7d38",
+  "split_sha256": {
+    "train": "123e592f126a78af789c8624fc5b103c83858f469747c8b1a21b076398b50966",
+    "validation": "31297fb200a41558a27fe5224a9acd994ba0c9c5a54d04d2e7e3dd4cb7a5f448",
+    "test": "5a04e6749d1ad4f31f7d660e72006d71f3f1ca352200dc7907e3d67d6f718ada"
+  },
+  "source_sha256": {
+    "scripts/compare_medical_relations.py": "4240714fd8a8dad3e3f7396ae1d0a745c2ccad095a62474caa70f3e3e332c896",
+    "nlp_lab/medical/relation_analysis.py": "2e2030657740cf003a0904e8db86d7ad2e6dd16ec0099a45cdee14946e9c902b",
+    "nlp_lab/medical/joint_train.py": "a5ff66c9d61a205c267d1dee2b9e1c76cfef768f39e7fdf5fb052c986f649110",
+    "nlp_lab\\medical\\data.py": "365b2c75030912c4e2cde8ad53ee586c7f0d09f8562621ba7940e940892653d0",
+    "nlp_lab\\medical\\ner.py": "9bb5d4ed949460960fa29cbf6bf7f9eb71b6138cc301b54f9293364ac889abfc",
+    "scripts\\run_medical.py": "bfc0b99a3d024fc4b1cce659f1195313a9e220381d9c1dbf1d33b64e04190858",
+    "nlp_lab\\ie_context.py": "72d0a331c3cc0b371a00687f04359c4503144eba815db21daf63db917fa49d69",
+    "nlp_lab\\ie\\__init__.py": "cbc10f15b827d007890e87c7b3621fe976e71db65cd7577de84285c8488d86d2",
+    "nlp_lab\\ie\\cli.py": "3d1b7eb3a76649068a9fda66c96039c68f9885c9da2ce6fd4d5d347abc9709e0",
+    "nlp_lab\\ie\\data.py": "eaa855de5a3c86715097cd35da3f485f5ce672ea4b3b80d9c4d628f5f5110f4e",
+    "nlp_lab\\ie\\encoding.py": "5007647a11695b90704874113c133ec813a019e219d583b17202d831d0dbcba3",
+    "nlp_lab\\ie\\metrics.py": "e816b2ca990956f0011626737cb2c6069f5457a31e2b5f586ab83906a279eaf8",
+    "nlp_lab\\ie\\model.py": "8e61b0e0f34705aa4d43675c4703bc37433334f2f56a6dddfb887c0e0bb007f3",
+    "nlp_lab\\ie\\predict.py": "4a50a5c28e6a56b6c48cebc8ad9e31c8a75325e0464d96fe82ef7df6d9585298",
+    "nlp_lab\\ie\\suite.py": "9a952575d8d9cbe9860e99b85e0d8e7b5efce7a35162c4b9ca3eb1add8b7bd82",
+    "nlp_lab\\ie\\train.py": "297b84c4fe96bc6d9e058f21180c302441be9a3abcb1c16aabd9fcee77ef0cdd"
+  },
+  "threshold_pairs": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      -0.5,
+      -0.5
+    ],
+    [
+      0.5,
+      0.5
+    ]
+  ],
+  "selection": "max validation relation F1; ties prefer zero",
+  "checkpoint": "max validation relation F1 at zero thresholds, same as original trainer",
+  "min_validation_gain": 0.005,
+  "release_audit": "previously reported holdout may veto deployment; never choose another candidate using it",
+  "ablation": "inference only: remove tail-link intersection using the same selected checkpoint and thresholds; not retraining",
+  "robustness": "same-length ASCII to full-width punctuation, all test documents; original offsets preserved",
+  "bootstrap": {
+    "replicates": 1000,
+    "seed": 20261007
+  },
+  "upstream": {
+    "repo": "bojone/GPLinker",
+    "commit": "461fb1f5c9a828356daabd6d75d71a0cc1ff7f9a",
+    "path": "duie_v1.py",
+    "blob_sha": "6446e4f3171bd6efec5e619db1988e389324854a"
+  },
+  "limitations": [
+    "One training seed; bootstrap excludes seed variation.",
+    "Microbatch2/accumulation16 vs original4/8 due concurrent resource pressure; same effective batch32 and update budget, different dropout numerics.",
+    "Reuses previous dev-derived holdout; not pristine final testing.",
+    "Typed medical GPLinker adaptation, not exact reproduction of upstream 12-layer encoder/untyped roles.",
+    "CMeIE relations are not trained literature PICO or efficacy/adverse-event records."
+  ]
+}

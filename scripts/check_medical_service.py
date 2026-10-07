@@ -14,16 +14,17 @@ def call(path,body=None):
 
 def main():
     overview=call('/api/medical');assert overview['status']['phase']=='completed'
+    expected_models={**overview['report']['weights_sha256'],'relations':overview['active_relation']['sha256']}
     checks=[]
     for source in overview['documents']:
         document=call('/api/medical/documents/'+source['id'])
         # Prefer an already completed extraction using the current pipeline source recipe.
         from nlp_lab.data import digest
-        fingerprints={name:digest(Path('nlp_lab/medical')/name) for name in ('documents.py','evidence.py','bindings.py','context.py','pipeline.py','ner.py')}
+        fingerprints={name:digest(Path('nlp_lab/medical')/name) for name in ('documents.py','evidence.py','bindings.py','context.py','runtime.py','pipeline.py','ner.py')}
         found=None
         for item in document['extractions']:
             extraction=call('/api/medical/extractions/'+item['id'])
-            if extraction.get('pipeline_source_sha256')==fingerprints:found=extraction;break
+            if extraction.get('pipeline_source_sha256')==fingerprints and extraction.get('models')==expected_models:found=extraction;break
         if found is None:
             job=call('/api/medical/documents/'+source['id']+'/extract',{})
             deadline=time.monotonic()+50
@@ -54,6 +55,7 @@ def main():
             assert r['subject'] in entities and r['object'] in entities
             assert text[r['evidence']['start']:r['evidence']['end']]==r['evidence']['text']
         checks.append({'document_id':source['id'],'title':source['metadata']['title'],'characters':len(text),
+            'models':found['models'],'relation_version':overview['active_relation']['version'],
             'extraction_id':found['id'],'entities':len(entities),'concepts':len(found['concepts']),
             'relations':len(found['relations']),'candidate_records':len(found['records']),'model_windows':found['model_windows'],
             'binding_suggestions':sum(len(r.get('binding_suggestions',[])) for r in found['records']),

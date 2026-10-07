@@ -14,3 +14,7 @@
 docs/results/*.json -text
 docs/ie-results/*.json -text
 docs/medical-results/*.json -text whitespace=cr-at-eol
+# Keep the v0.7 entrypoint bytes captured by its immutable Windows protocol.
+scripts/compare_medical_relations.py -text -eol whitespace=cr-at-eol
+scripts/compare_medical_gp_loss.py -text -eol whitespace=cr-at-eol
+nlp_lab/medical/joint_train.py whitespace=-blank-at-eof

@@ -8,7 +8,16 @@
   "paper_sources.json": "f71e926e8e20f8fffec615da20589abb6abd854c87b4b7c4bc79bd8864dab643",
   "protocol.json": "7ec07a6423344c194cd3bd925aa11f33d09a145ccdeea51f49e99b5213b64d56",
   "relation_history.json": "fa151de5896d0e63f3117e9b90fab9efa1f4361d9358202a6637f10f6d15f731",
+  "relation_release_policy.json": "cc6f9a29ceeb8a267aa83c54a0e45c1c653771ae1085fa08ab3b2a3314a95d79",
+  "relation_v2_history.json": "4f03437bce7e66b093c78666baee73be33866e766cb44c97d3f916bc662f5073",
+  "relation_v2_protocol.json": "0c8eb6c0404b2a1f521693918aab26e4f1f80afa29486574c754895fb6d04fca",
+  "relation_v2_report.json": "36bb6fe92ec95508c92f61ae355ed3d02abf7f2737da8831dedf0d5e7fcf3dd3",
+  "relation_v2_selection.json": "0e33a2577459d67dff89700978f11c8dbf989aaed26e90919ae8c818d964184a",
+  "relation_v3_history.json": "407780e4fa86d4b5812540e94add7ff920a2c9444f60663445862aa2fbdc797a",
+  "relation_v3_protocol.json": "10fce9f04294a363e61f137ec098728a662d9b78b48c8792292265da80902eaa",
+  "relation_v3_report.json": "4478843c6a7216187b08c62d4b18d5b9aa523930724a25884cfbc12812db2fb7",
+  "relation_v3_selection.json": "89da4cbc3bb7f707eede1db2d966b8067aee73a87169af54661f3a20024dd763",
   "report.json": "5cabd020082d8211a7b1806cf33840b6264901a71f51428c56aea6648ecf99e6",
   "sample_approved.json": "3c8191f7d989dde6d6e2592b30c6b710d31f4bcd78a5f0c2ec94dbae613aad4c",
-  "service_check.json": "b4de0f94df092573417317e3ae0f7a75adb2f63dcca2a52c4db87e65bb7e0e22"
+  "service_check.json": "8690f406e44b96a41ed4ad926a689012b3e1eb824e6f6120c9269311b9b1089e"
 }

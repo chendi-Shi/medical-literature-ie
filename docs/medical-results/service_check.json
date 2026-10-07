@@ -4,7 +4,12 @@
       "document_id": "42959de4444c4e4d887dfa599fe370c5",
       "title": "免疫单药与免疫联合化疗在75岁及以上晚期非小细胞肺癌患者中的疗效与安全性对比",
       "characters": 21031,
-      "extraction_id": "18bace21152e4e22ba52b54d11bdd8fa",
+      "models": {
+        "ner": "3bf30a5e19c05b968bf79609dc02679705d9ffef58b2b4343f08d880fcea313c",
+        "relations": "1f694ee4317f34b79dfb9fdb9a48595eba879af83b3415b471708f008d9ac3e0"
+      },
+      "relation_version": "relation-v1",
+      "extraction_id": "1b30dba48e9447889f8738a702d15b45",
       "entities": 245,
       "concepts": 75,
       "relations": 6,
@@ -22,7 +27,8 @@
         "evidence.py": "7e979dabaf15d2c484a170dc2cb52aaf95b6b02a2481a96745b46e2a654e945d",
         "bindings.py": "ae53ca889ba16449b9ba4cbeac5d365437fa3876c9f2850ac838cac160ca3c20",
         "context.py": "f63050b18fe03e79d5317460f0458ea7447e8eefd63ce2807208a03b9119ac63",
-        "pipeline.py": "f834d71ca75dbbe385e147ae6b91007df17d0a00d7da901c58f41d60c9cca70f",
+        "runtime.py": "04e8a07071fa82853ee317ede080857e6b251a02d916b05b94b43fa9ae0c06d7",
+        "pipeline.py": "bda6c70a68c23d3e51f1b3e0aa13ccd2821b2ef3a213a914af70d5093f68f153",
         "ner.py": "9bb5d4ed949460960fa29cbf6bf7f9eb71b6138cc301b54f9293364ac889abfc"
       }
     },
@@ -30,7 +36,12 @@
       "document_id": "d2330e0d97b14134afaf577d97533314",
       "title": "驱动基因阴性非小细胞肺癌二线治疗中国专家共识",
       "characters": 9737,
-      "extraction_id": "b73e97b7c1844d92bf09a6cb10bea660",
+      "models": {
+        "ner": "3bf30a5e19c05b968bf79609dc02679705d9ffef58b2b4343f08d880fcea313c",
+        "relations": "1f694ee4317f34b79dfb9fdb9a48595eba879af83b3415b471708f008d9ac3e0"
+      },
+      "relation_version": "relation-v1",
+      "extraction_id": "d1df61b59ff94778ad1b99b7418e215f",
       "entities": 259,
       "concepts": 104,
       "relations": 8,
@@ -48,7 +59,8 @@
         "evidence.py": "7e979dabaf15d2c484a170dc2cb52aaf95b6b02a2481a96745b46e2a654e945d",
         "bindings.py": "ae53ca889ba16449b9ba4cbeac5d365437fa3876c9f2850ac838cac160ca3c20",
         "context.py": "f63050b18fe03e79d5317460f0458ea7447e8eefd63ce2807208a03b9119ac63",
-        "pipeline.py": "f834d71ca75dbbe385e147ae6b91007df17d0a00d7da901c58f41d60c9cca70f",
+        "runtime.py": "04e8a07071fa82853ee317ede080857e6b251a02d916b05b94b43fa9ae0c06d7",
+        "pipeline.py": "bda6c70a68c23d3e51f1b3e0aa13ccd2821b2ef3a213a914af70d5093f68f153",
         "ner.py": "9bb5d4ed949460960fa29cbf6bf7f9eb71b6138cc301b54f9293364ac889abfc"
       }
     }
@@ -56,11 +68,13 @@
   "search_verified": true,
   "scope": "Functional checks on public papers; not independently expert-annotated extraction accuracy.",
   "upgrade_checks": {
-    "version": "0.6.0",
-    "unit_tests_passed": 110,
-    "original_decoder_remains_default": true,
-    "source_cued_records": 88,
-    "blocked_context_entities": 8,
-    "scope": "Functional regression checks only; no expert-annotated clinical accuracy claim."
+    "version": "0.7.0",
+    "tests_passed": 120,
+    "relation_experiments_completed": [
+      "relation-v2",
+      "relation-v3"
+    ],
+    "default_relation_version": "relation-v1",
+    "scope": "Functional inference, offsets, references and artifact identity; not expert-annotated clinical extraction accuracy."
   }
 }

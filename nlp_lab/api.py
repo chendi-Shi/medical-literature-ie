@@ -51,7 +51,7 @@ class PredictRequest(BaseModel):
 
 def create_app(workspace: Path):
     workspace = workspace.resolve()
-    app = FastAPI(title="Chinese Medical Literature Extraction", version="0.6.0")
+    app = FastAPI(title="Chinese Medical Literature Extraction", version="0.7.0")
     from .ie_api import router
     app.include_router(router(workspace))
     from .medical.api import router as medical_router

@@ -58,10 +58,15 @@ def router(workspace):
         except KeyError as e:raise HTTPException(404,str(e)) from e
     @routes.get('')
     def overview():
+        from .runtime import relation_artifact,relation_training_status,latest_comparison
+        active=relation_artifact(root) if (root/'report.json').exists() else None
         return {'status':read_json(root/'status.json') if (root/'status.json').exists() else {'phase':'not_trained'},
                 'report':read_json(root/'report.json') if (root/'report.json').exists() else None,'documents':store.documents(),
                 'decoding_experiment':read_json(root/'decoding-v2/report.json') if (root/'decoding-v2/report.json').exists() else None,
-                'decoder_policy':read_json(root/'decoder_policy.json') if (root/'decoder_policy.json').exists() else {'enabled':False}}
+                'decoder_policy':read_json(root/'decoder_policy.json') if (root/'decoder_policy.json').exists() else {'enabled':False},
+                'active_relation':{k:v for k,v in active.items() if k!='run'} if active else None,
+                'relation_comparison':latest_comparison(root),
+                'relation_training':relation_training_status(root)}
     @routes.post('/documents',status_code=201)
     def ingest(body:DocumentRequest):
         try:return store.add_document(parse_document(body.content,body.format,body.title,body.source))
@@ -80,9 +85,11 @@ def router(workspace):
         def work():
             try:
                 job.update(status='running',started_at=now());save_json(path,job)
-                if not cached:
+                from .runtime import relation_artifact
+                active=relation_artifact(root)
+                if not cached or cached[0].fingerprints['relations']!=active['sha256']:
                     from .pipeline import LiteratureExtractor
-                    cached.append(LiteratureExtractor(workspace))
+                    cached[:]=[LiteratureExtractor(workspace)]
                 result=store.add_extraction(identifier,cached[0].extract(document))
                 job.update(status='completed',extraction_id=result['id'],finished_at=now())
             except Exception as e:job.update(status='failed',error=f'{type(e).__name__}: {e}')

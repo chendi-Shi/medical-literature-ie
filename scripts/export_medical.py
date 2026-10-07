@@ -34,6 +34,13 @@ def main():
     for name in ('protocol','selection','report'):
         source=root/'decoding-v2'/f'{name}.json'
         if source.exists():shutil.copyfile(source,destination/f'decoding_{name}.json')
+    for version in ('relation-v2','relation-v3'):
+        comparison=root/version
+        if (comparison/'report.json').exists():
+            for name in ('protocol','selection','report'):
+                shutil.copyfile(comparison/f'{name}.json',destination/f'{version.replace(chr(45),chr(95))}_{name}.json')
+            for name,sha in read_json(comparison/'protocol.json')['source_sha256'].items():
+                if digest(Path(name))!=sha:raise ValueError('Relation experiment source changed: '+name)
     n=report['ner']['micro'];b=report['ner_dictionary_baseline']['micro'];r=report['relations']['relation']
     types='\n'.join(f"- {typ}：F1 {m['f1']*100:.2f}%，gold {m['gold']}。" for typ,m in report['ner']['per_type'].items())
     text=f'''# 医学文献抽取：实际结果与边界
@@ -43,7 +50,7 @@ def main():
 - 医学嵌套实体：{report['ner']['documents']:,} 条文本，P {n['precision']*100:.2f}% / R {n['recall']*100:.2f}% / F1 **{n['f1']*100:.2f}%**；正确 {n['correct']:,}、预测 {n['predicted']:,}、gold {n['gold']:,}。
 - 仅训练集构建的词典基线：F1 **{b['f1']*100:.2f}%**；同一保留集上提高 {(n['f1']-b['f1'])*100:.2f} 个百分点。单种子结果，不代表训练稳定性。
 - 医学关系：{report['relations']['documents']:,} 条文本，P {r['precision']*100:.2f}% / R {r['recall']*100:.2f}% / F1 **{r['f1']*100:.2f}%**；正确 {r['correct']:,}、预测 {r['predicted']:,}、gold {r['gold']:,}。
-- 关系 Macro F1：{report['relations']['macro_relation_f1']*100:.2f}%。关系模型没有强基线对照，不能声称提升或优于 CBLUE。
+- 原始关系 Macro F1：{report['relations']['macro_relation_f1']*100:.2f}%。原始实验没有外部强基线对照；后续联合架构与损失对照见 v0.7 记录，不能声称优于 CBLUE 官方基线。
 
 ## 真实训练证据
 

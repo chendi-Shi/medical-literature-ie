@@ -1,0 +1,6 @@
+{
+  "enabled": false,
+  "version": "relation-v1",
+  "selection_sha256": "89da4cbc3bb7f707eede1db2d966b8067aee73a87169af54661f3a20024dd763",
+  "reason": "Neither validation candidate passed the predeclared gain gate"
+}
