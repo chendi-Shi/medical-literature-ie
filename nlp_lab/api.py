@@ -14,6 +14,7 @@ from .cli import safe_child
 from .data import prepare, read_json
 from .training import Predictor, TrainConfig, allocate_run, compare_runs, update_run
 from .security import LoginThrottle, ProductionSecurity, SESSION_COOKIE, SESSION_SECONDS
+from .body_limit import RequestBodyLimitMiddleware
 
 
 class ImportRequest(BaseModel):
@@ -85,16 +86,6 @@ def create_app(workspace: Path, *, production: bool = False):
                     return JSONResponse({"detail": "不接受跨站写入"}, status_code=403)
             elif origin and origin != f"http://{request.headers.get('host')}":
                 return JSONResponse({"detail": "不接受跨站写入"}, status_code=403)
-        try:
-            declared_length = int(request.headers.get("content-length", "0"))
-        except ValueError:
-            declared_length = 2_000_001
-        if declared_length > 2_000_000:
-            from fastapi.responses import JSONResponse
-            return JSONResponse({"detail": "请求超过 2MB 限制"}, status_code=413)
-        if request.method not in ("GET", "HEAD") and len(await request.body()) > 2_000_000:
-            return JSONResponse({"detail": "请求超过 2MB 限制"}, status_code=413)
-
         protected = request.url.path.startswith("/api/") and request.url.path not in (
             "/api/auth/session", "/api/auth/login")
         if production and protected:
@@ -325,4 +316,4 @@ def create_app(workspace: Path, *, production: bool = False):
         except (ValueError, FileNotFoundError) as e:
             raise HTTPException(400, str(e)) from e
 
-    return app
+    return RequestBodyLimitMiddleware(app, max_bytes=2_000_000)
