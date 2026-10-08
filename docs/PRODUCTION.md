@@ -58,14 +58,22 @@ sudo systemctl enable --now medical-workbench
 
 ## 数据备份
 
-使用 SQLite 在线备份 API，快照会在发布前通过 `PRAGMA quick_check`，命令拒绝覆盖已存在的文件：
+使用 SQLite 在线备份 API。源数据库不存在时会直接报错，不会先创建空库；快照会在发布前通过完整性和 schema 检查，命令拒绝覆盖已存在的文件：
 
 ```sh
 nlp-medical --workspace /srv/medical/workspace backup \
-  --output /mnt/encrypted-backups/literature-2026-10-07.sqlite3
+  --output /mnt/encrypted-backups/literature-2026-10-08.sqlite3
 ```
 
-目标必须处在加密的独立备份卷上；定期检查备份清单、读权限和可恢复性。更新程序或数据库结构前先建立并验证备份。当前没有自动备份调度或自动恢复功能。
+先将备份恢复到新文件，命令会再次校验完整性、必需表和数据库版本，且不会覆盖目标文件：
+
+```sh
+nlp-medical --workspace /srv/medical/workspace restore \
+  --input /mnt/encrypted-backups/literature-2026-10-08.sqlite3 \
+  --output /srv/medical/restore-drill/literature.sqlite3
+```
+
+这会生成可供隔离演练和人工切换的恢复副本，不会替换在线数据库。实际切换前停止服务、保留当前数据库副本，并由操作人员按组织流程完成原子切换与回滚准备。目标必须处在加密的独立备份卷上；定期检查备份清单、读权限和可恢复性。更新程序或数据库结构前先建立并验证备份。当前没有自动备份调度或自动切换恢复。
 
 ## 放行门槛
 
